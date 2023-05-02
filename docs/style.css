@@ -48,6 +48,29 @@ h1 {
   width: clamp(150px, 45%, 1920px);
 }
 
+.frameEnd {
+  text-align: center;
+  background-color: #222;
+  border-radius: 8px;
+}
+.frameEnd h1 {
+  padding: 1.2rem 2rem;
+  background-color: black;
+}
+.frameEnd h2 {
+  text-shadow: 2px 2px 1px red;
+  color: lightgreen;
+  margin-bottom: 60px;
+  font-size: xx-large;
+}
+.frameEnd h3 {
+  font-size: medium;
+}
+.frameEnd h4 {
+  font-size: small;
+  color: #888;
+}
+
 #gameInput {
   position: fixed;
   bottom: 0;
@@ -86,6 +109,13 @@ h1 {
   background-color: rgba(0, 0, 0, 0.2);
 }
 
+#correctMarker {
+  background-color: red;
+  width: 16px;
+  height: 32px;
+  transform: scale(1.1);
+}
+
 .yearDialog {
   user-select: none;
   position: absolute;
@@ -93,6 +123,15 @@ h1 {
   background-color: black;
   color: white;
   padding: 0.5rem;
+}
+
+#correctYearDialog {
+  background-color: red;
+}
+
+button[disabled] {
+  background-color: gray !important;
+  color: white !important;
 }
 
 #confirmButton {
@@ -108,7 +147,6 @@ h1 {
 
 .loading {
   display: inline-block;
-  height: 1em;
   position: relative;
   overflow: hidden;
   background-color: rgb(25, 25, 25);
