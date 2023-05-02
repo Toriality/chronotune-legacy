@@ -66,3 +66,22 @@ function updateYearDialog() {
     slider.dataset.year = nearestYearMarker.dataset.year;
   }
 }
+
+// Spotify functions
+document.addEventListener("DOMContentLoaded", async () => {
+  const songBox = document.querySelector("#songBox");
+  const songFrame = document.querySelector("#songFrame");
+  const response = await fetch("http://localhost:3700/random");
+  const song = await response.json();
+
+  songBox.style.backgroundImage = `url(${song.image})`;
+  songBox.classList.remove("loading");
+  const blurBox = document.createElement("div");
+  blurBox.classList.add("blurBox");
+  songBox.appendChild(blurBox);
+
+  songFrame.innerHTML = `
+    <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/${song.url}?utm_source=generator&theme=0" width="100%" height="100%" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+    `;
+  songFrame.classList.remove("loading");
+});
