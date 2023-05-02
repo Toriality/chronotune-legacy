@@ -58,9 +58,10 @@ h1 {
 }
 
 #timeline {
+  position: relative;
   display: flex;
-  flex-direction: row;
   align-items: center;
+  justify-content: space-between;
   height: 10px;
   background-color: gray;
   margin: 20px;
@@ -68,12 +69,29 @@ h1 {
 }
 
 #timelineSlider {
+  z-index: 1;
   width: 16px;
-  height: 50%;
+  height: 32px;
   background-color: green;
   position: absolute;
   left: calc(50% - 25px);
   cursor: grab;
+}
+
+.year {
+  position: absolute;
+  height: 100%;
+  width: 1px;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.yearDialog {
+  user-select: none;
+  position: absolute;
+  transform: translate(-25%, -125%);
+  background-color: black;
+  color: white;
+  padding: 0.5rem;
 }
 
 #confirmButton {
