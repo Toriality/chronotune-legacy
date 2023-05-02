@@ -2,7 +2,7 @@ const router = require("express").Router();
 const Token = require("./token");
 const helpers = require("./helpers");
 
-router.get("/auth", async (req, res, next) => {
+async function auth(req, res, next) {
   let numberOfTokens = await Token.countDocuments();
   let token;
 
@@ -23,10 +23,17 @@ router.get("/auth", async (req, res, next) => {
     token = await Token.findOne({});
     await token.validate();
   } catch (err) {
-    throw err;
+    console.log(err.message);
+    return res.status(500).json({ error: err.message });
   }
 
+  req.token = token.secret;
   next();
+}
+
+router.get("/random", auth, async (req, res) => {
+  const song = await helpers.getRandomSong(req.token);
+  res.json(song);
 });
 
 module.exports = router;
