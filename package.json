@@ -1,0 +1,14 @@
+{
+  "name": "chronotune",
+  "version": "0.1.0",
+  "description": "Guess the release date of random songs!",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js"
+  },
+  "author": "Toriality",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2"
+  }
+}
