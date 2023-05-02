@@ -1,4 +1,5 @@
-const Schema = require("mongoose").Schema;
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
 const tokenSchema = new Schema({
   secret: {
@@ -34,4 +35,5 @@ tokenSchema.post("save", function () {
   console.log(`Server has saved token ${this.secret}`);
 });
 
-module.exports = tokenSchema;
+const Token = mongoose.model("Token", tokenSchema);
+module.exports = Token;
