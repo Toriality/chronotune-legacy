@@ -1,4 +1,5 @@
-// Slider functions
+import game from "./game.js";
+
 const timeline = document.querySelector("#timeline");
 const slider = document.querySelector("#timelineSlider");
 let isDragging = false;
@@ -67,66 +68,68 @@ function updateYearDialog() {
   }
 }
 
-// Spotify functions
-document.addEventListener("DOMContentLoaded", async () => {
-  let score = 0;
+game.start();
 
-  const songBox = document.querySelector("#songBox");
-  const songFrame = document.querySelector("#songFrame");
-  const response = await fetch("http://localhost:3700/random");
-  const song = await response.json();
-  console.log(song);
+// // Spotify functions
+// document.addEventListener("DOMContentLoaded", async () => {
+//   let score = 0;
 
-  songBox.style.backgroundImage = `url(${song.image})`;
-  songBox.classList.remove("loading");
-  const blurBox = document.createElement("div");
-  blurBox.classList.add("blurBox");
-  songBox.appendChild(blurBox);
+//   const songBox = document.querySelector("#songBox");
+//   const songFrame = document.querySelector("#songFrame");
+//   const response = await fetch("http://localhost:3700/random");
+//   const song = await response.json();
+//   console.log(song);
 
-  songFrame.innerHTML = `
-    <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/${song.url}?utm_source=generator&theme=0" width="100%" height="100%" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-    `;
-  songFrame.classList.remove("loading");
+//   songBox.style.backgroundImage = `url(${song.image})`;
+//   songBox.classList.remove("loading");
+//   const blurBox = document.createElement("div");
+//   blurBox.classList.add("blurBox");
+//   songBox.appendChild(blurBox);
 
-  // Button functions
-  const confirmButton = document.querySelector("#confirmButton");
-  confirmButton.disabled = false;
+//   songFrame.innerHTML = `
+//     <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/${song.url}?utm_source=generator&theme=0" width="100%" height="100%" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+//     `;
+//   songFrame.classList.remove("loading");
 
-  confirmButton.addEventListener("click", async () => {
-    score = getScore(song);
-    confirmButton.disabled = true;
-    confirmButton.classList.add("loading");
-    confirmButton.textContent = "Next";
+//   // Button functions
+//   const confirmButton = document.querySelector("#confirmButton");
+//   confirmButton.disabled = false;
 
-    const correctMarker = document.querySelector(`.year[data-year="${song.year}"]`);
-    correctMarker.id = "correctMarker";
-    const correctYearDialog = document.createElement("div");
-    correctYearDialog.classList.add("yearDialog");
-    correctYearDialog.id = "correctYearDialog";
-    correctYearDialog.innerText = song.year;
-    correctMarker.appendChild(correctYearDialog);
+//   confirmButton.addEventListener("click", async () => {
+//     score = getScore(song);
+//     confirmButton.disabled = true;
+//     confirmButton.classList.add("loading");
+//     confirmButton.textContent = "Next";
 
-    songFrame.classList.add("frameEnd");
-    songFrame.innerHTML = `
-        <h1>${song.year}</h1>
-        <h2>Score: ${score} pts</h2>
-        <h3>${song.name}</h3>
-        <h4>By ${song.artist}</h4>
-    `;
+//     const correctMarker = document.querySelector(`.year[data-year="${song.year}"]`);
+//     correctMarker.id = "correctMarker";
+//     const correctYearDialog = document.createElement("div");
+//     correctYearDialog.classList.add("yearDialog");
+//     correctYearDialog.id = "correctYearDialog";
+//     correctYearDialog.innerText = song.year;
+//     correctMarker.appendChild(correctYearDialog);
 
-    setTimeout(() => {
-      confirmButton.classList.remove("loading");
-      confirmButton.disabled = false;
-    }, 1000);
-  });
-});
+//     songFrame.classList.add("frameEnd");
+//     songFrame.innerHTML = `
+//         <h1>${song.year}</h1>
+//         <h2>Score: ${score} pts</h2>
+//         <h3>${song.name}</h3>
+//         <h4>By ${song.artist}</h4>
+//     `;
 
-function getScore(song) {
-  const yearInput = slider.dataset.year;
-  const yearCorrect = song.year;
+//     setTimeout(() => {
+//       confirmButton.classList.remove("loading");
+//       confirmButton.disabled = false;
+//     }, 1000);
+//   });
+// });
 
-  const yearDifference = Math.abs(yearCorrect - yearInput);
+// function getScore(song) {
+//   const yearInput = slider.dataset.year;
+//   const yearCorrect = song.year;
 
-  const score = 100 - Math.min(yearDifference * 2, 100);
-  return score;
-}
+//   const yearDifference = Math.abs(yearCorrect - yearInput);
+
+//   const score = 100 - Math.min(yearDifference * 2, 100);
+//   return score;
+// }
