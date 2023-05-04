@@ -23,12 +23,7 @@ const tokenSchema = new Schema({
       message: "Invalid token",
     },
   },
-  expireAt: {
-    type: Date,
-    // Spotify API token expires after 1 hour
-    default: Date.now() + 3600 * 1000,
-    expires: "1h",
-  },
+  expireAt: { type: Date, expires: "1h", default: Date.now() + 3600000 },
 });
 
 tokenSchema.post("save", function () {
