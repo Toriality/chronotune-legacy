@@ -8,29 +8,35 @@ const game = {
   },
 
   init() {
+    console.log("Game initialized");
+    structure.init(this.confirm.bind(this), this.nextMatch.bind(this));
     structure.createTimeline();
+    this.score = 0;
+    this.match = 1;
     this.start();
   },
 
   async start() {
-    this.score = 0;
-    this.match = 1;
+    console.log("Game started");
     await song.load();
     console.log(this.song);
     structure.createSongElements(this.song);
-    structure.createConfirmButton(this.song, this.confirm.bind(this));
+    structure.createConfirmButton(this.song);
   },
 
-  nextMatch() {
+  async nextMatch() {
+    console.log(`Match ${this.match}`);
     this.match++;
-    this.song = song.load();
+    structure.reset();
+    await this.start();
   },
 
   confirm(score) {
-    this.score = score;
-    structure.finishSongFrame(this.song, this.score);
+    console.log(`Score ${score}`);
+    this.score = this.score + score;
+    structure.finishSongFrame(this.song, score);
     structure.finishTimeline(this.song);
-    structure.createNextButton(this.nextMatch.bind(this));
+    structure.createNextButton();
   },
 };
 

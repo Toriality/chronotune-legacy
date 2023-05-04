@@ -5,18 +5,40 @@ const TOTAL_YEARS = CURRENT_YEAR - START_YEAR + 1;
 let timeline = document.querySelector("#timeline");
 let slider = document.querySelector("#timelineSlider");
 let markers = null;
+let correctMarker = null;
+let correctYearDialog = null;
 let songBox = document.querySelector("#songBox");
 let songFrame = document.querySelector("#songFrame");
 let confirmButton = document.querySelector("#confirmButton");
+let nextButton = document.querySelector("#nextButton");
+let blurBox = null;
 
 const structure = {
+  confirm: null,
+  nextMatch: null,
+
+  init(confirm, nextMatch) {
+    this.confirm = confirm;
+    this.nextMatch = nextMatch;
+    console.log(this.confirm, this.nextMatch);
+  },
+
   reset() {
-    slider.style.let = "0px";
-    song.style.backgroundImage = undefined;
+    console.log("Resetting structure");
+    slider.style.left = "calc(50% - 25px)";
+    songBox.classList.add("loading");
+    songBox.style.backgroundImage = "";
+    songFrame.classList.add("loading");
     songFrame.innerHTML = "";
+    confirmButton.disabled = true;
+    nextButton.disabled = true;
+    correctMarker.id = "";
+    correctYearDialog.remove();
+    blurBox.remove();
   },
 
   createTimeline() {
+    console.log("Creating timeline");
     let isDragging = false;
     let startOffset = 0;
     let startX = 0;
@@ -88,12 +110,13 @@ const structure = {
   },
 
   createSongElements(song) {
+    console.log("Creating song elements");
     songBox = document.querySelector("#songBox");
     songFrame = document.querySelector("#songFrame");
 
     // Create song box and blur effect
     songBox.style.backgroundImage = `url(${song.image})`;
-    const blurBox = document.createElement("div");
+    blurBox = document.createElement("div");
     blurBox.classList.add("blurBox");
     songBox.appendChild(blurBox);
 
@@ -107,15 +130,24 @@ const structure = {
     songFrame.classList.remove("loading");
   },
 
-  createConfirmButton: (song, confirm) => {
+  createConfirmButton(song) {
+    console.log("Creating confirm button");
+    nextButton.classList.add("hide");
+    confirmButton.classList.remove("hide");
+    confirmButton.classList.remove("loading");
     confirmButton.disabled = false;
     confirmButton = document.querySelector("#confirmButton");
-    confirmButton.addEventListener("click", () => {
-      confirmButton.disabled = true;
-      confirmButton.classList.add("loading");
-      const score = calculateScore(song);
-      confirm(score);
-    });
+    confirmButton.addEventListener(
+      "click",
+      async function () {
+        console.log(this, this.confirm);
+        confirmButton.disabled = true;
+        confirmButton.classList.add("loading");
+        const score = calculateScore(song);
+        await this.confirm(score);
+      }.bind(this),
+      { once: true }
+    );
 
     function calculateScore(song) {
       const yearInput = slider.dataset.year;
@@ -126,18 +158,25 @@ const structure = {
     }
   },
 
-  createNextButton(nextMatch) {
-    confirmButton.id = "nextButton";
-    confirmButton.innerText = "Next song";
-    confirmButton.disabled = false;
-    confirmButton.addEventListener("click", () => {
-      confirmButton.disabled = true;
-      confirmButton.classList.add("loading");
-      nextMatch();
-    });
+  createNextButton() {
+    console.log("Creating next button");
+    confirmButton.classList.add("hide");
+    nextButton.classList.remove("hide");
+    nextButton.classList.remove("loading");
+    nextButton.disabled = false;
+    nextButton.addEventListener(
+      "click",
+      async function () {
+        nextButton.disabled = true;
+        nextButton.classList.add("loading");
+        await this.nextMatch();
+      }.bind(this),
+      { once: true }
+    );
   },
 
   finishSongFrame(song, score) {
+    console.log("Finishing song frame");
     songFrame.classList.add("frameEnd");
     songFrame.innerHTML = `
         <h1>${song.year}</h1>
@@ -148,9 +187,10 @@ const structure = {
   },
 
   finishTimeline(song) {
-    const correctMarker = document.querySelector(`.year[data-year="${song.year}"]`);
+    console.log("Finishing timeline");
+    correctMarker = document.querySelector(`.year[data-year="${song.year}"]`);
     correctMarker.id = "correctMarker";
-    const correctYearDialog = document.createElement("div");
+    correctYearDialog = document.createElement("div");
     correctYearDialog.classList.add("yearDialog");
     correctYearDialog.id = "correctYearDialog";
     correctYearDialog.innerText = song.year;
