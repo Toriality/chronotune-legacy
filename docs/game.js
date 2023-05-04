@@ -1,8 +1,11 @@
 import song from "./song.js";
 import structure from "./structure.js";
 
+const MAX_MATCHES = 5;
+
 const game = {
   score: 0,
+  match: 1,
   get song() {
     return song.get();
   },
@@ -22,10 +25,16 @@ const game = {
     structure.createConfirmButton(this.song);
   },
 
+  async finish() {
+    song.unload();
+    structure.createFinish(this.score);
+  },
+
   async nextMatch() {
     this.match++;
     structure.reset();
-    await this.start();
+    if (this.match <= MAX_MATCHES) return await this.start();
+    else return await this.finish();
   },
 
   confirm(score) {

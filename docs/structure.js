@@ -188,6 +188,25 @@ const structure = {
     correctYearDialog.innerText = song.year;
     correctMarker.appendChild(correctYearDialog);
   },
+
+  createFinish(score) {
+    let highestScore = localStorage.getItem("highestScore");
+
+    if (!highestScore || score > parseInt(highestScore)) {
+      localStorage.setItem("highestScore", score);
+      highestScore = score;
+    }
+
+    songFrame.innerHTML = `
+        <h1>Congratulations!</h1>
+        <h2>You scored ${score} pts</h2>
+        <h3>Highest score: ${highestScore} pts</h3>
+    `;
+    songFrame.classList.remove("loading");
+
+    songBox.style.background = "red";
+    songBox.classList.remove("loading");
+  },
 };
 
 export default structure;

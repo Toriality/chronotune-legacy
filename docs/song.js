@@ -27,6 +27,15 @@ const song = {
       url: this.url,
     };
   },
+
+  unload() {
+    this.state = "idle";
+    this.name = null;
+    this.artist = null;
+    this.image = null;
+    this.year = null;
+    this.url = null;
+  },
 };
 
 export default song;
