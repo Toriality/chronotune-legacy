@@ -7,7 +7,6 @@ const song = {
   url: null,
 
   async load() {
-    console.log("Loading song");
     const song = await fetch("http://localhost:3700/random");
     const data = await song.json();
     this.name = data.name;
@@ -19,7 +18,6 @@ const song = {
   },
 
   get() {
-    console.log("Getting song");
     return {
       state: this.state,
       name: this.name,

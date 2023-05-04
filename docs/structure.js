@@ -20,11 +20,10 @@ const structure = {
   init(confirm, nextMatch) {
     this.confirm = confirm;
     this.nextMatch = nextMatch;
-    console.log(this.confirm, this.nextMatch);
+    this.confirm, this.nextMatch;
   },
 
   reset() {
-    console.log("Resetting structure");
     slider.style.left = "calc(50% - 25px)";
     songBox.classList.add("loading");
     songBox.style.backgroundImage = "";
@@ -38,7 +37,6 @@ const structure = {
   },
 
   createTimeline() {
-    console.log("Creating timeline");
     let isDragging = false;
     let startOffset = 0;
     let startX = 0;
@@ -110,7 +108,6 @@ const structure = {
   },
 
   createSongElements(song) {
-    console.log("Creating song elements");
     songBox = document.querySelector("#songBox");
     songFrame = document.querySelector("#songFrame");
 
@@ -131,7 +128,6 @@ const structure = {
   },
 
   createConfirmButton(song) {
-    console.log("Creating confirm button");
     nextButton.classList.add("hide");
     confirmButton.classList.remove("hide");
     confirmButton.classList.remove("loading");
@@ -140,7 +136,6 @@ const structure = {
     confirmButton.addEventListener(
       "click",
       async function () {
-        console.log(this, this.confirm);
         confirmButton.disabled = true;
         confirmButton.classList.add("loading");
         const score = calculateScore(song);
@@ -159,7 +154,6 @@ const structure = {
   },
 
   createNextButton() {
-    console.log("Creating next button");
     confirmButton.classList.add("hide");
     nextButton.classList.remove("hide");
     nextButton.classList.remove("loading");
@@ -176,7 +170,6 @@ const structure = {
   },
 
   finishSongFrame(song, score) {
-    console.log("Finishing song frame");
     songFrame.classList.add("frameEnd");
     songFrame.innerHTML = `
         <h1>${song.year}</h1>
@@ -187,7 +180,6 @@ const structure = {
   },
 
   finishTimeline(song) {
-    console.log("Finishing timeline");
     correctMarker = document.querySelector(`.year[data-year="${song.year}"]`);
     correctMarker.id = "correctMarker";
     correctYearDialog = document.createElement("div");

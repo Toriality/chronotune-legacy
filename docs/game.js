@@ -8,7 +8,6 @@ const game = {
   },
 
   init() {
-    console.log("Game initialized");
     structure.init(this.confirm.bind(this), this.nextMatch.bind(this));
     structure.createTimeline();
     this.score = 0;
@@ -17,7 +16,6 @@ const game = {
   },
 
   async start() {
-    console.log("Game started");
     await song.load();
     console.log(this.song);
     structure.createSongElements(this.song);
@@ -25,14 +23,12 @@ const game = {
   },
 
   async nextMatch() {
-    console.log(`Match ${this.match}`);
     this.match++;
     structure.reset();
     await this.start();
   },
 
   confirm(score) {
-    console.log(`Score ${score}`);
     this.score = this.score + score;
     structure.finishSongFrame(this.song, score);
     structure.finishTimeline(this.song);
