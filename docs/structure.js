@@ -11,6 +11,7 @@ let songBox = document.querySelector("#songBox");
 let songFrame = document.querySelector("#songFrame");
 let confirmButton = document.querySelector("#confirmButton");
 let nextButton = document.querySelector("#nextButton");
+let newGameButton = document.querySelector("#newGameButton");
 let blurBox = null;
 let audio = new Audio();
 
@@ -60,6 +61,7 @@ const structure = {
     songFrame.style.backgroundColor = "";
     confirmButton.disabled = true;
     nextButton.disabled = true;
+    newGameButton.disabled = true;
     correctMarker.id = "";
     correctYearDialog.remove();
     blurBox.remove();
@@ -269,6 +271,14 @@ const structure = {
   },
 
   createFinish(score) {
+    nextButton.classList.add("hide");
+    newGameButton.classList.remove("hide");
+    newGameButton.disabled = false;
+
+    newGameButton.addEventListener("click", function () {
+      window.location.reload();
+    });
+
     let highestScore = localStorage.getItem("highestScore");
 
     if (!highestScore || score > parseInt(highestScore)) {
@@ -283,7 +293,7 @@ const structure = {
     `;
     songFrame.classList.remove("loading");
 
-    songBox.style.background = "red";
+    songBox.style.background = "";
     songBox.classList.remove("loading");
   },
 };

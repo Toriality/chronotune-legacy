@@ -144,31 +144,30 @@ h1 {
   background-color: red;
 }
 
+button {
+  flex: 1;
+  padding: 1rem;
+}
+button:hover {
+  background-color: black !important;
+  color: green !important;
+}
 button[disabled] {
   background-color: gray !important;
   color: white !important;
 }
 
 #confirmButton {
-  flex: 1;
   background-color: green;
   color: white;
-  padding: 1rem;
 }
-#confirmButton:hover {
-  background-color: black;
-  color: green;
-}
-
 #nextButton {
-  flex: 1;
   background-color: blueviolet;
   color: white;
-  padding: 1rem;
 }
-#nextButton:hover {
-  background-color: black;
-  color: green;
+#newGameButton {
+  background-color: yellow;
+  color: black;
 }
 
 .loading {
