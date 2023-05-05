@@ -4,6 +4,7 @@
   "description": "Guess the release date of random songs!",
   "main": "server.js",
   "scripts": {
+    "start": "node server.js",
     "dev": "nodemon server.js"
   },
   "author": "Toriality",
