@@ -33,9 +33,6 @@ exports.getRandomSong = async function (token) {
 
   const data = await song.json();
 
-  let url = data.tracks.items[0].external_urls.spotify;
-  url = url.substring(url.lastIndexOf("/") + 1);
-
   let year = data.tracks.items[0].album.release_date.substring(0, 4);
 
   return {
@@ -43,7 +40,7 @@ exports.getRandomSong = async function (token) {
     artist: data.tracks.items[0].artists[0].name,
     image: data.tracks.items[0].album.images[0].url,
     year: year,
-    url: url,
+    url: data.tracks.items[0].preview_url,
   };
 };
 

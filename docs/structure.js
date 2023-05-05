@@ -12,28 +12,61 @@ let songFrame = document.querySelector("#songFrame");
 let confirmButton = document.querySelector("#confirmButton");
 let nextButton = document.querySelector("#nextButton");
 let blurBox = null;
+let audio = new Audio();
 
 const structure = {
   confirm: null,
   nextMatch: null,
+  events: null,
+  pausedEvents: null,
+  addEventListener: null,
+  removeEventListener: null,
+  pauseEventListener: null,
+  resumeEventListener: null,
 
   init(confirm, nextMatch) {
     this.confirm = confirm;
     this.nextMatch = nextMatch;
     this.confirm, this.nextMatch;
+    this.events = new Map();
+    this.pausedEvents = new Map();
+    this.addEventListener = function (element, event, id, callback) {
+      this.events.set(id, callback);
+      element.addEventListener(event, callback);
+    };
+    this.removeEventListener = function (element, event, id) {
+      element.removeEventListener(event, this.events.get(id));
+      this.events.delete(id);
+    };
+    this.pauseEventListener = function (element, event, id) {
+      element.removeEventListener(event, this.events.get(id));
+      this.pausedEvents.set(id, this.events.get(id));
+      this.events.delete(id);
+    };
+    this.resumeEventListener = function (element, event, id) {
+      this.events.set(id, this.pausedEvents.get(id));
+      element.addEventListener(event, this.pausedEvents.get(id));
+      this.pausedEvents.delete(id);
+    };
   },
 
   reset() {
     slider.style.left = "calc(50% - 25px)";
     songBox.classList.add("loading");
     songBox.style.backgroundImage = "";
+    songFrame.classList.remove("frameEnd");
     songFrame.classList.add("loading");
     songFrame.innerHTML = "";
+    songFrame.style.backgroundColor = "";
     confirmButton.disabled = true;
     nextButton.disabled = true;
     correctMarker.id = "";
     correctYearDialog.remove();
     blurBox.remove();
+    this.resumeEventListener(slider, "mousedown", "sliderMouseDown");
+    this.resumeEventListener(document, "mousemove", "sliderMouseMove");
+    this.resumeEventListener(document, "mouseup", "sliderMouseUp");
+    audio.src = "";
   },
 
   createTimeline() {
@@ -63,13 +96,13 @@ const structure = {
     updateYearDialog();
 
     // Slider mouse events
-    slider.addEventListener("mousedown", (e) => {
+    this.addEventListener(slider, "mousedown", "sliderMouseDown", (e) => {
       isDragging = true;
       startX = e.clientX;
       startOffset = slider.offsetLeft - timeline.offsetLeft;
     });
 
-    document.addEventListener("mousemove", (e) => {
+    this.addEventListener(document, "mousemove", "sliderMouseMove", (e) => {
       if (isDragging) {
         let newPosition = startOffset + e.clientX - startX;
         if (newPosition >= 0 && newPosition <= timeline.offsetWidth) {
@@ -79,7 +112,7 @@ const structure = {
       }
     });
 
-    document.addEventListener("mouseup", () => {
+    this.addEventListener(document, "mouseup", "sliderMouseUp", () => {
       isDragging = false;
     });
 
@@ -118,13 +151,53 @@ const structure = {
     songBox.appendChild(blurBox);
 
     // Configure song frame
-    songFrame.innerHTML = `
-        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/${song.url}?utm_source=generator&theme=0" width="100%" height="100%" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-        `;
+    songFrame.style.backgroundColor = randomRGB();
+    songFrame.innerHTML = "<h1>Click here to play</h1>";
 
     // Remove loading class
     songBox.classList.remove("loading");
     songFrame.classList.remove("loading");
+
+    audio.src = song.url;
+    audio.volume = 0.5;
+    this.addEventListener(songFrame, "click", "songFrameClick", () => {
+      if (audio.paused) {
+        songFrame.innerHTML = "";
+        audio.play();
+        const h1 = document.createElement("h1");
+        const songTime = document.createElement("div");
+        h1.innerText = `Playing now: "${song.name}"`;
+        songTime.style.backgroundColor = randomRGB();
+        songTime.id = "songTime";
+        songFrame.appendChild(h1);
+        songFrame.appendChild(songTime);
+      } else {
+        songFrame.innerHTML = "";
+        audio.pause();
+        audio.currentTime = 0;
+        songFrame.innerHTML = `<h1>Click here to play</h1>`;
+      }
+    });
+
+    this.addEventListener(audio, "ended", "audioEnded", () => {
+      songFrame.innerHTML = `<h1>Click here to play</h1>`;
+    });
+
+    this.addEventListener(audio, "timeupdate", "audioTimeUpdate", () => {
+      const songTime = document.querySelector("#songTime");
+      if (songTime) {
+        const percentage = (audio.currentTime / audio.duration) * 100;
+        songTime.style.width = `${percentage}%`;
+      }
+    });
+
+    function randomRGB() {
+      const rgb = Array.from({ length: 3 }, () => Math.floor(Math.random() * 255));
+      if (Math.max(...rgb) - Math.min(...rgb) < 128) {
+        return randomRGB();
+      }
+      return `rgb(${rgb.join(", ")})`;
+    }
   },
 
   createConfirmButton(song) {
@@ -170,6 +243,12 @@ const structure = {
   },
 
   finishSongFrame(song, score) {
+    this.removeEventListener(songFrame, "click", "songFrameClick");
+    this.removeEventListener(audio, "ended", "audioEnded");
+    this.removeEventListener(audio, "timeupdate", "audioTimeUpdate");
+    this.pauseEventListener(slider, "mousedown", "sliderMouseDown");
+    this.pauseEventListener(document, "mousemove", "sliderMouseMove");
+    this.pauseEventListener(document, "mouseup", "sliderMouseUp");
     songFrame.classList.add("frameEnd");
     songFrame.innerHTML = `
         <h1>${song.year}</h1>

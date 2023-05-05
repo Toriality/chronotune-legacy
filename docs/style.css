@@ -44,13 +44,28 @@ h1 {
 
 #songFrame {
   z-index: 1;
-  box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.5);
+  position: relative;
+  box-shadow: 12px 8px black;
+  text-shadow: 2px 2px black;
   width: clamp(150px, 45%, 1920px);
+  min-height: clamp(80px, 15%, 800px);
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  justify-content: center;
+  animation: songFrame 10s forwards linear alternate infinite;
+}
+
+#songTime {
+  position: absolute;
+  left: 0;
+  height: 100%;
+  mix-blend-mode: exclusion;
 }
 
 .frameEnd {
-  text-align: center;
-  background-color: #222;
+  background-color: #222 !important;
+  color: white !important;
   border-radius: 8px;
 }
 .frameEnd h1 {
@@ -157,6 +172,7 @@ button[disabled] {
 }
 
 .loading {
+  box-shadow: none !important;
   display: inline-block;
   position: relative;
   overflow: hidden;
@@ -191,5 +207,17 @@ button[disabled] {
 @keyframes loading {
   100% {
     transform: translateX(110%) scale(1.1);
+  }
+}
+
+@keyframes songFrame {
+  0% {
+    color: rgb(80, 80, 255);
+  }
+  50% {
+    color: rgb(80, 255, 80);
+  }
+  100% {
+    color: rgb(255, 80, 80);
   }
 }
