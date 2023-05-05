@@ -1,3 +1,5 @@
+const randomWords = require("random-words");
+
 // Create a new auth token on Spotify and return it
 exports.createToken = async function () {
   const token = await fetch("https://accounts.spotify.com/api/token", {
@@ -21,27 +23,91 @@ exports.createToken = async function () {
 
 // Returns a random song from Spotify
 exports.getRandomSong = async function (token) {
-  const song = await fetch(
-    `https://api.spotify.com/v1/search?q=year%3A${getRandomYear()}&type=track&limit=1&offset=${getRandomOffset()}`,
-    {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+  const MAX_RETRIES = 30;
+  const MIN_POPULARITY = 10;
+  let retries = 1;
+  let randomWord;
+  let randomYear;
+  let randomOffset;
 
-  const data = await song.json();
-
-  let year = data.tracks.items[0].album.release_date.substring(0, 4);
-
-  return {
-    name: data.tracks.items[0].name,
-    artist: data.tracks.items[0].artists[0].name,
-    image: data.tracks.items[0].album.images[0].url,
-    year: year,
-    url: data.tracks.items[0].preview_url,
+  const configureQuery = () => {
+    const hasWords = Math.random() > 0.5;
+    randomWord = hasWords ? randomWords() : "";
+    randomOffset = hasWords ? getRandomOffset(10) : getRandomOffset(999);
+    randomYear = getRandomYear();
   };
+
+  const fetchSongData = async () => {
+    try {
+      const song = await fetch(
+        `https://api.spotify.com/v1/search?q=${randomWord} year:${randomYear}&type=track&limit=50&offset=${randomOffset}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return await song.json();
+    } catch (err) {
+      throw new Error(err.message);
+    }
+  };
+
+  while (retries <= MAX_RETRIES) {
+    try {
+      configureQuery();
+      const song = await fetchSongData();
+
+      if (!song.tracks.items.length) {
+        throw new Error(
+          `No songs found for ${
+            randomWord ? `word ${randomWord}, ` : ""
+          }year: ${randomYear}, offset: ${randomOffset}`
+        );
+      }
+
+      const validPopularity = song.tracks.items.filter(
+        (item) => item.popularity >= MIN_POPULARITY
+      );
+
+      if (validPopularity.length === 0) {
+        throw new Error(
+          `No popular songs for ${
+            randomWord ? `word ${randomWord}, ` : ""
+          }year: ${randomYear}, offset: ${randomOffset}`
+        );
+      }
+
+      const randomIndex = Math.floor(Math.random() * validPopularity.length);
+      const randomSong = validPopularity[randomIndex];
+
+      const foundSong = {
+        query: {
+          word: randomWord,
+          year: randomYear,
+          offset: randomOffset,
+        },
+        name: randomSong.name,
+        artist: randomSong.artists[0].name,
+        image: randomSong.album.images[0].url,
+        year: randomSong.album.release_date.substring(0, 4),
+        url: randomSong.preview_url,
+        popularity: randomSong.popularity,
+      };
+
+      console.log(foundSong);
+      return foundSong;
+    } catch (err) {
+      console.log(`Error getting random song on retry ${retries}: ${err.message}`);
+      retries++;
+      if (retries === MAX_RETRIES) {
+        console.log(`FATAL: Couldn't get random song after ${MAX_RETRIES} retries`);
+        throw err;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+    }
+  }
 };
 
 // Returns current year
@@ -53,6 +119,6 @@ function getRandomYear() {
 }
 
 // Returns a random offset between 0 and 999
-function getRandomOffset() {
-  return Math.floor(Math.random() * 999);
+function getRandomOffset(max) {
+  return Math.floor(Math.random() * max);
 }
