@@ -110,6 +110,32 @@ exports.getRandomSong = async function (token) {
   }
 };
 
+exports.getTitleImages = async function (token) {
+  const randomYear = getRandomYear();
+  const fetchSongs = async () => {
+    try {
+      const songs = await fetch(
+        `https://api.spotify.com/v1/search?q=${randomYear}&type=track&limit=50`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return await songs.json();
+    } catch (err) {
+      throw new Error(err.message);
+    }
+  };
+
+  const data = await fetchSongs();
+  const songs = data.tracks.items;
+  const images = songs.map((song) => song.album.images[0].url);
+
+  return images;
+};
+
 // Returns current year
 const CURRENT_YEAR = new Date().getFullYear();
 

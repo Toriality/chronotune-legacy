@@ -53,4 +53,13 @@ router.get("/random", auth, async (req, res) => {
   }
 });
 
+router.get("/titleImages", auth, async (req, res) => {
+  try {
+    const song = await helpers.getTitleImages(req.token);
+    res.json(song);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;

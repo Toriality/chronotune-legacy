@@ -1,2 +1,3 @@
 import game from "./game.js";
-game.init();
+
+await game.init();

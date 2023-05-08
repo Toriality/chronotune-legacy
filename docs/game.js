@@ -10,12 +10,16 @@ const game = {
     return song.get();
   },
 
-  init() {
-    structure.init(this.confirm.bind(this), this.nextMatch.bind(this));
+  async init() {
+    structure.init(
+      this.confirm.bind(this),
+      this.nextMatch.bind(this),
+      this.start.bind(this)
+    );
     structure.createTimeline();
+    await structure.createTitleScreen();
     this.score = 0;
     this.match = 1;
-    this.start();
   },
 
   async start() {

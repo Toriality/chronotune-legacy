@@ -2,6 +2,7 @@ const START_YEAR = 1900;
 const CURRENT_YEAR = new Date().getFullYear();
 const TOTAL_YEARS = CURRENT_YEAR - START_YEAR + 1;
 
+let menuTitle = document.querySelector("#menu h1");
 let timeline = document.querySelector("#timeline");
 let slider = document.querySelector("#timelineSlider");
 let markers = null;
@@ -9,6 +10,7 @@ let correctMarker = null;
 let correctYearDialog = null;
 let songBox = document.querySelector("#songBox");
 let songFrame = document.querySelector("#songFrame");
+let songTime = document.querySelector("#songTime");
 let confirmButton = document.querySelector("#confirmButton");
 let nextButton = document.querySelector("#nextButton");
 let newGameButton = document.querySelector("#newGameButton");
@@ -25,9 +27,10 @@ const structure = {
   pauseEventListener: null,
   resumeEventListener: null,
 
-  init(confirm, nextMatch) {
+  init(confirm, nextMatch, start) {
     this.confirm = confirm;
     this.nextMatch = nextMatch;
+    this.start = start;
     this.confirm, this.nextMatch;
     this.events = new Map();
     this.pausedEvents = new Map();
@@ -56,7 +59,7 @@ const structure = {
     songBox.classList.add("loading");
     songBox.style.backgroundImage = "";
     songFrame.classList.remove("frameEnd");
-    songFrame.classList.add("loading");
+    songFrame.classList.add("hide");
     songFrame.innerHTML = "";
     songFrame.style.backgroundColor = "";
     confirmButton.disabled = true;
@@ -69,6 +72,32 @@ const structure = {
     this.resumeEventListener(document, "mousemove", "sliderMouseMove");
     this.resumeEventListener(document, "mouseup", "sliderMouseUp");
     audio.src = "";
+  },
+
+  async createTitleScreen() {
+    const images = await fetch("http://localhost:3700/titleImages");
+    const data = await images.json();
+
+    const titleScreenBackground = document.getElementById("titleScreenBackground");
+    for (let i = 0; i < 50; i++) {
+      const tsMusic = document.createElement("div");
+      tsMusic.classList.add("tsMusic");
+      const direction = i % 2 === 0 ? "slider_up" : "slider_down";
+      tsMusic.style.backgroundImage = `url(${data[i]})`;
+      tsMusic.style.animation = `${direction} 2s ease-out forwards`;
+      tsMusic.classList.remove("loading");
+      titleScreenBackground.appendChild(tsMusic);
+    }
+
+    const startButton = document.querySelector("#titleScreen button");
+    startButton.addEventListener(
+      "click",
+      async function () {
+        const titleScreen = document.getElementById("titleScreen");
+        titleScreen.remove();
+        this.start();
+      }.bind(this)
+    );
   },
 
   createTimeline() {
@@ -143,8 +172,21 @@ const structure = {
   },
 
   createSongElements(song) {
-    songBox = document.querySelector("#songBox");
-    songFrame = document.querySelector("#songFrame");
+    songFrame.appendChild(songTime);
+
+    // Make random color
+    const randomColor1 = randomRGB();
+    const randomColor2 = randomRGB();
+    const var1 = "var(--color_random_1)";
+    const var2 = "var(--color_random_2)";
+    const root = document.querySelector(":root");
+    root.style.setProperty("--color_random_1", randomColor1);
+    root.style.setProperty("--color_random_2", randomColor2);
+
+    // menuTitle.style.color = var1;
+    slider.style.backgroundColor = var1;
+    songFrame.style.backgroundColor = var1;
+    songTime.style.backgroundColor = var2;
 
     // Create song box and blur effect
     songBox.style.backgroundImage = `url(${song.image})`;
@@ -153,12 +195,11 @@ const structure = {
     songBox.appendChild(blurBox);
 
     // Configure song frame
-    songFrame.style.backgroundColor = randomRGB();
     songFrame.innerHTML = "<h1>Click here to play</h1>";
 
     // Remove loading class
     songBox.classList.remove("loading");
-    songFrame.classList.remove("loading");
+    songFrame.classList.remove("hide");
 
     audio.src = song.url;
     audio.volume = 0.5;
@@ -167,13 +208,11 @@ const structure = {
         songFrame.innerHTML = "";
         audio.play();
         const h1 = document.createElement("h1");
-        const songTime = document.createElement("div");
         h1.innerText = `Playing now: "${song.name}"`;
-        songTime.style.backgroundColor = randomRGB();
-        songTime.id = "songTime";
         songFrame.appendChild(h1);
         songFrame.appendChild(songTime);
       } else {
+        songTime.style.width = 0;
         songFrame.innerHTML = "";
         audio.pause();
         audio.currentTime = 0;
@@ -182,6 +221,7 @@ const structure = {
     });
 
     this.addEventListener(audio, "ended", "audioEnded", () => {
+      songTime.style.width = 0;
       songFrame.innerHTML = `<h1>Click here to play</h1>`;
     });
 
@@ -251,6 +291,7 @@ const structure = {
     this.pauseEventListener(slider, "mousedown", "sliderMouseDown");
     this.pauseEventListener(document, "mousemove", "sliderMouseMove");
     this.pauseEventListener(document, "mouseup", "sliderMouseUp");
+    songTime.style.width = 0;
     songFrame.classList.add("frameEnd");
     songFrame.innerHTML = `
         <h1>${song.year}</h1>
@@ -291,7 +332,7 @@ const structure = {
         <h2>You scored ${score} pts</h2>
         <h3>Highest score: ${highestScore} pts</h3>
     `;
-    songFrame.classList.remove("loading");
+    songFrame.classList.remove("hide");
 
     songBox.style.background = "";
     songBox.classList.remove("loading");
