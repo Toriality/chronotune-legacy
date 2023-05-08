@@ -1,4 +1,5 @@
 const randomWords = require("random-words");
+const Invalid = require("./invalid");
 
 // Create a new auth token on Spotify and return it
 exports.createToken = async function () {
@@ -57,6 +58,18 @@ exports.getRandomSong = async function (token) {
   while (retries <= MAX_RETRIES) {
     try {
       configureQuery();
+
+      if (
+        await Invalid.findOne({
+          year: randomYear,
+          offset: randomOffset,
+          word: randomWord,
+        })
+      ) {
+        console.log("Invalid query found", randomWord, randomYear, randomOffset);
+        continue;
+      }
+
       const song = await fetchSongData();
 
       if (!song.tracks.items.length) {
@@ -100,6 +113,11 @@ exports.getRandomSong = async function (token) {
       return foundSong;
     } catch (err) {
       console.log(`Error getting random song on retry ${retries}: ${err.message}`);
+      Invalid.create({
+        year: randomYear,
+        offset: randomOffset,
+        word: randomWord,
+      });
       retries++;
       if (retries === MAX_RETRIES) {
         console.log(`FATAL: Couldn't get random song after ${MAX_RETRIES} retries`);
