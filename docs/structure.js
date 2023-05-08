@@ -75,16 +75,17 @@ const structure = {
   },
 
   async createTitleScreen() {
-    const images = await fetch("http://localhost:3700/titleImages");
-    const data = await images.json();
+    const response = await fetch("http://localhost:3700/titleImages");
+    const data = await response.json();
+    const images = data.images;
 
     const titleScreenBackground = document.getElementById("titleScreenBackground");
     for (let i = 0; i < 50; i++) {
       const tsMusic = document.createElement("div");
       tsMusic.classList.add("tsMusic");
       const direction = i % 2 === 0 ? "slider_up" : "slider_down";
-      tsMusic.style.backgroundImage = `url(${data[i]})`;
-      tsMusic.style.animation = `${direction} 2s ease-out forwards`;
+      tsMusic.style.backgroundImage = `url(${images[i]})`;
+      tsMusic.style.animation = `${direction} 1s ease-out forwards`;
       tsMusic.classList.remove("loading");
       titleScreenBackground.appendChild(tsMusic);
     }
