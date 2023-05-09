@@ -1,6 +1,36 @@
 const randomWords = require("random-words");
 const Invalid = require("./invalid");
 
+/**
+ * Retries an asynchronous function until it succeeds or the maximum number of retries is reached.
+ * @param {Object} options The options object.
+ * @param {Function} options.onTry The asynchronous function to retry.
+ * @param {Function} [options.onCatch] Optional function to execute on each catch block.
+ * @param {number} [options.maxRetries=5] The maximum number of retries.
+ * @param {number} [options.retryDelay=3000] The delay in milliseconds between retries.
+ * @returns {Function} A new function that performs the retry logic.
+ */
+exports.withRetry = function ({ onTry, onCatch, maxRetries = 5, retryDelay = 3000 }) {
+  return async function (...args) {
+    let retries = 0;
+    for (let i = 0; i < maxRetries; i++) {
+      try {
+        return await onTry(...args);
+      } catch (err) {
+        retries++;
+        if (retries >= maxRetries) {
+          throw new Error(`Failed after ${maxRetries} retries: ${err.message}`);
+        }
+        if (onCatch) {
+          const retryCount = retries;
+          await onCatch(err, retryCount);
+        }
+        await new Promise((resolve) => setTimeout(resolve, retryDelay));
+      }
+    }
+  };
+};
+
 // Create a new auth token on Spotify and return it
 exports.createToken = async function () {
   const token = await fetch("https://accounts.spotify.com/api/token", {
