@@ -117,7 +117,7 @@ exports.getRandomSong = async function (
 exports.createTitleImages = async function (token, amount) {
   const imagesSets = [];
   for (let i = 0; i < amount; i++) {
-    const randomYear = getRandomYear();
+    const randomYear = exports.getRandomYear();
     const fetchSongs = async () => {
       try {
         const songs = await fetch(

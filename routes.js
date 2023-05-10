@@ -52,11 +52,10 @@ async function auth(req, res, next) {
 
 router.get("/random", auth, async (req, res) => {
   const getRandomSong = helpers.withRetry({
-    onTry: async () => {
-      const MAX_OFFSET = 999;
+    onTry: async (token, maxOffset) => {
       const query = {
         year: helpers.getRandomYear(),
-        offset: helpers.getRandomOffset(MAX_OFFSET),
+        offset: helpers.getRandomOffset(maxOffset),
         word: helpers.getRandomWord(),
       };
 
@@ -66,7 +65,7 @@ router.get("/random", auth, async (req, res) => {
         throw err;
       }
 
-      const songs = await helpers.getRandomSong(req.token, query);
+      const songs = await helpers.getRandomSong(token, query);
     },
     onCatch: async (err, retryCount) => {
       console.log(
@@ -77,7 +76,9 @@ router.get("/random", auth, async (req, res) => {
   });
 
   try {
-    const songs = await getRandomSong();
+    const token = req.token;
+    const MAX_OFFSET = 999;
+    const songs = await getRandomSong(token, MAX_OFFSET);
     return res.json(songs);
   } catch (err) {
     return res.status(500).json({ error: err.message });
@@ -85,31 +86,41 @@ router.get("/random", auth, async (req, res) => {
 });
 
 router.get("/titleImages", auth, async (req, res) => {
-  const createTitleImages = helpers.withRetry(async (token, amount) => {
-    console.log(`Creating ${amount} titleImage variants because none exists on database`);
-    const newTitleImages = await helpers.createTitleImages(token, amount);
-    const titleImages = await TitleImage.create(newTitleImages);
-    return titleImages;
+  const createTitleImages = helpers.withRetry({
+    onTry: async (token, amount) => {
+      const newTitleImages = await helpers.createTitleImages(token, amount);
+      const titleImages = await TitleImage.create(newTitleImages);
+      return titleImages;
+    },
+    onCatch: async (err, retryCount) => {
+      console.log(
+        `Failed to create title images after ${retryCount} retries: ${err.message}`
+      );
+    },
   });
 
-  const token = req.token;
-  const amount = 5;
-  let titleImages = null;
-  let numberOfTitleImages = 0;
-
   try {
+    const AMOUNT = 5;
+    const token = req.token;
+    let titleImages = null;
+    let numberOfTitleImages = 0;
+
     numberOfTitleImages = await TitleImage.countDocuments();
     if (numberOfTitleImages === 0) {
-      titleImages = await createTitleImages(token, amount);
+      console.log(
+        `Creating ${AMOUNT} titleImage variants because none exists on database`
+      );
+      titleImages = await createTitleImages(token, AMOUNT);
+      const randomIndex = Math.floor(Math.random() * titleImages.length);
+      return res.json(titleImages[randomIndex]);
     } else {
       const randomIndex = Math.floor(Math.random() * numberOfTitleImages);
       titleImages = await TitleImage.findOne({}).skip(randomIndex);
+      return res.json(titleImages);
     }
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
-
-  return res.json(titleImages);
 });
 
 module.exports = router;
