@@ -29,6 +29,15 @@ body {
   height: 100vh;
 }
 
+#version {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  color: white;
+  margin: 1rem 2rem;
+  opacity: 0.25;
+}
+
 #github a {
   text-decoration: none;
   z-index: 999;
