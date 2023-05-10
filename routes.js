@@ -52,33 +52,59 @@ async function auth(req, res, next) {
 
 router.get("/random", auth, async (req, res) => {
   const getRandomSong = helpers.withRetry({
-    onTry: async (token, maxOffset) => {
+    onTry: async (token, maxOffset, minPopularity) => {
       const query = {
+        word: helpers.getRandomWord(),
         year: helpers.getRandomYear(),
         offset: helpers.getRandomOffset(maxOffset),
-        word: helpers.getRandomWord(),
       };
 
       if (await Invalid.findOne(query)) {
-        const err = new Error("Invalid query found");
+        throw new Error("Invalid query found");
+      }
+
+      const songs = await helpers.getRandomSongs(token, query);
+
+      const validPopularity = songs.filter((song) => song.popularity >= minPopularity);
+
+      if (validPopularity.length === 0) {
+        const err = new Error(
+          `No popular songs found [query: w:${query.word} y:${query.year} o:${query.offset}]`
+        );
+        err.query = query;
         err.name = "InvalidQuery";
         throw err;
       }
 
-      const songs = await helpers.getRandomSong(token, query);
+      const randomIndex = Math.floor(Math.random() * validPopularity.length);
+      const randomSong = validPopularity[randomIndex];
+
+      const data = {
+        name: randomSong.name,
+        artist: randomSong.artists[0].name,
+        image: randomSong.album.images[0].url,
+        year: randomSong.album.release_date.substring(0, 4),
+        popularity: randomSong.popularity,
+        url: randomSong.preview_url,
+      };
+
+      return data;
     },
     onCatch: async (err, retryCount) => {
       console.log(
         `Failed to get random song after ${retryCount} retries: ${err.message}`
       );
-      if (err.name === "InvalidQuery") await Invalid.create(query);
+      if (err.name === "InvalidQuery") await Invalid.create(err.query);
     },
+    maxRetries: 30,
+    retryDelay: 1000,
   });
 
   try {
     const token = req.token;
-    const MAX_OFFSET = 999;
-    const songs = await getRandomSong(token, MAX_OFFSET);
+    const MAX_OFFSET = 900;
+    const MIN_POPULARITY = 10;
+    const songs = await getRandomSong(token, MAX_OFFSET, MIN_POPULARITY);
     return res.json(songs);
   } catch (err) {
     return res.status(500).json({ error: err.message });

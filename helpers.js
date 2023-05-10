@@ -52,7 +52,7 @@ exports.createToken = async function () {
 };
 
 /**
- * Asynchronously retrieves a random song from the Spotify API based on parameters.
+ * Asynchronously retrieves 50 random songs from the Spotify API based on parameters.
  *
  * @param {string} token - Authorization token for accessing the Spotify API.
  * @param {Object} options - Object containing the parameters.
@@ -62,15 +62,13 @@ exports.createToken = async function () {
  * @return {Promise<Object>} - A Promise that resolves to a JSON object containing information about the random song.
  * @throws {Error} - Throws an error if there is an issue with fetching the song or parsing the response.
  */
-exports.getRandomSong = async function (
+exports.getRandomSongs = async function (
   token,
-  { randomWord = "", randomYear = CURRENT_YEAR, randomOffset = 0 }
+  { word = "", year = CURRENT_YEAR, offset = 0 }
 ) {
   try {
-    const query = { year: randomYear, offset: randomOffset, word: randomWord };
-
     const response = await fetch(
-      `https://api.spotify.com/v1/search?q=${randomWord} year:${randomYear}&type=track&limit=50&offset=${randomOffset}`,
+      `https://api.spotify.com/v1/search?q=${word} year:${year}&type=track&limit=50&offset=${offset}`,
       {
         method: "GET",
         headers: {
@@ -82,34 +80,18 @@ exports.getRandomSong = async function (
     const songs = await response.json();
 
     if (response.status !== 200)
-      throw new Error(`Failed to fetch song list ${songs.error}`);
+      throw new Error(`Failed to fetch song list ${songs.error?.message}`);
 
-    if (songs.tracks.items.length === 0)
-      throw new Error(`No songs found [query: ${query}]`);
+    if (songs.tracks.items.length === 0) {
+      const err = new Error(`No songs found [query: w:${word} y:${year} o:${offset}]`);
+      err.query = query;
+      err.name = "InvalidQuery";
+      throw err;
+    }
 
-    const validPopularity = songs.tracks.items.filter(
-      (song) => song.popularity >= MIN_POPULARITY
-    );
-
-    if (validPopularity.length === 0)
-      throw new Error(`No popular songs found [query: ${query}]`);
-
-    const randomIndex = Math.floor(Math.random() * validPopularity.length);
-    const randomSong = validPopularity[randomIndex];
-
-    const song = {
-      query: query,
-      name: randomSong.name,
-      artist: randomSong.artists[0].name,
-      image: randomSong.album.images[0].url,
-      year: randomSong.album.release_date.substring(0, 4),
-      popularity: randomSong.popularity,
-      url: randomSong.preview_url,
-    };
-
-    return song;
+    return songs.tracks.items;
   } catch (err) {
-    throw new Error(err.message);
+    throw err;
   }
 };
 
@@ -158,4 +140,9 @@ exports.getRandomYear = function () {
 // Returns a random offset between 0 and 999
 exports.getRandomOffset = function (max) {
   return Math.floor(Math.random() * max);
+};
+
+exports.getRandomWord = function (chance = 100) {
+  const hasWord = Math.floor(Math.random() * 100) < chance;
+  return hasWord ? randomWords() : "";
 };
