@@ -1,7 +1,8 @@
 const router = require("express").Router();
+const helpers = require("./helpers");
 const Token = require("./token");
 const TitleImage = require("./titleImage");
-const helpers = require("./helpers");
+const Invalid = require("./invalid");
 
 async function auth(req, res, next) {
   const createToken = helpers.withRetry({
@@ -50,11 +51,36 @@ async function auth(req, res, next) {
 }
 
 router.get("/random", auth, async (req, res) => {
+  const getRandomSong = helpers.withRetry({
+    onTry: async () => {
+      const MAX_OFFSET = 999;
+      const query = {
+        year: helpers.getRandomYear(),
+        offset: helpers.getRandomOffset(MAX_OFFSET),
+        word: helpers.getRandomWord(),
+      };
+
+      if (await Invalid.findOne(query)) {
+        const err = new Error("Invalid query found");
+        err.name = "InvalidQuery";
+        throw err;
+      }
+
+      const songs = await helpers.getRandomSong(req.token, query);
+    },
+    onCatch: async (err, retryCount) => {
+      console.log(
+        `Failed to get random song after ${retryCount} retries: ${err.message}`
+      );
+      if (err.name === "InvalidQuery") await Invalid.create(query);
+    },
+  });
+
   try {
-    const song = await helpers.getRandomSong(req.token);
-    res.json(song);
+    const songs = await getRandomSong();
+    return res.json(songs);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: err.message });
   }
 });
 
