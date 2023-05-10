@@ -11,8 +11,31 @@
 body {
   user-select: none;
   background-color: black;
+  color: white;
   font-family: var(--font_body);
   margin: 0;
+}
+
+#help {
+  margin: 8rem 4rem;
+}
+
+#help h1 {
+  line-height: 1;
+}
+
+#help p,
+#help li {
+  font-size: x-large;
+}
+
+#back {
+  padding: 2rem 4rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: greenyellow;
 }
 
 #menu h1 {
@@ -27,6 +50,41 @@ body {
   flex-direction: column;
   position: relative;
   height: 100vh;
+}
+
+#pages {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 0.8rem 1.4rem;
+}
+
+#pages ul {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#pages li {
+  padding: 0.8rem 1.4rem;
+  opacity: 0.8;
+  color: white;
+  border: 4px solid transparent;
+  transition: all 0.2s ease-in-out;
+}
+#pages li a {
+  text-decoration: none;
+  color: white;
+}
+
+#pages li:hover {
+  cursor: pointer;
+  font-weight: bolder;
+  background-color: darkcyan;
+  border-color: black;
+  border-radius: 8px;
+  box-shadow: 8px 8px black;
 }
 
 #version {
@@ -100,7 +158,7 @@ body {
   overflow: hidden;
 }
 
-#titleScreen h1 {
+h1 {
   color: white;
   text-shadow: 8px 8px rgb(86, 159, 40), -4px -4px black;
   line-height: 0;
