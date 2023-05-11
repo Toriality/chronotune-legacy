@@ -10,14 +10,64 @@
 
 body {
   user-select: none;
-  background-color: black;
+  background-color: #111;
   color: white;
   font-family: var(--font_body);
   margin: 0;
 }
 
 #help {
-  margin: 8rem 4rem;
+  margin: 8rem;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+#help .section {
+  position: relative;
+  flex-basis: 45%;
+  background-color: darkcyan;
+  border-radius: 8px;
+  border: 4px solid black;
+  box-shadow: 8px 8px black;
+  min-height: 20rem;
+}
+#help .section::-webkit-scrollbar {
+  background: black;
+  width: 0.4rem;
+}
+#help .section::-webkit-scrollbar-thumb {
+  background: gray;
+}
+
+#help .title {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  margin: auto;
+  padding: 2rem;
+  opacity: 1;
+  transition: opacity 0.2s ease-in-out;
+}
+#help .title h1 {
+  font-size: 4rem;
+  margin: 0;
+}
+
+#help .content {
+  opacity: 0;
+  position: absolute;
+  margin: 2rem;
+  padding: 2rem;
+  transition: opacity 0.2s ease-in-out;
 }
 
 #help h1 {
@@ -26,10 +76,12 @@ body {
 
 #help p,
 #help li {
+  text-shadow: 4px 4px black;
   font-size: x-large;
 }
 
 #back {
+  z-index: 999;
   padding: 2rem 4rem;
   position: fixed;
   top: 0;
