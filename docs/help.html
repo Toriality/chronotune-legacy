@@ -4,15 +4,25 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+    />
     <link rel="stylesheet" href="style.css" />
     <title>Chronotune: Help</title>
   </head>
   <body>
-    <div id="back">
-      <a href="./index.html">Back</a>
+    <div id="pages">
+      <ul>
+        <li><a href="./index.html">Home</a></li>
+        <li><a href="./leaderboards.html">Leaderboards</a></li>
+      </ul>
     </div>
     <div id="help">
-      <div class="section">
+      <div class="navigate" id="back">
+        <i class="fa-solid fa-arrow-left"></i>
+      </div>
+      <div class="section active">
         <div class="title">
           <h1>What is Chronotune?</h1>
         </div>
@@ -87,6 +97,9 @@
             and diversity is our top priority!
           </p>
         </div>
+      </div>
+      <div class="navigate" id="forward">
+        <i class="fa-solid fa-arrow-right"></i>
       </div>
     </div>
     <script src="help.js" type="module"></script>
