@@ -5,6 +5,7 @@ const TOTAL_YEARS = CURRENT_YEAR - START_YEAR + 1;
 let menuTitle = document.querySelector("#menu h1");
 let timeline = document.querySelector("#timeline");
 let slider = document.querySelector("#timelineSlider");
+let yearDialog = null;
 let markers = null;
 let correctMarker = null;
 let correctYearDialog = null;
@@ -71,6 +72,7 @@ const structure = {
     this.resumeEventListener(document, "mousemove", "sliderMouseMove");
     this.resumeEventListener(document, "mouseup", "sliderMouseUp");
     audio.src = "";
+    this.updateYearDialog();
   },
 
   async createTitleScreen() {
@@ -99,7 +101,7 @@ const structure = {
     slider = document.querySelector("#timelineSlider");
 
     // Create year dialog above slider
-    const yearDialog = document.createElement("div");
+    yearDialog = document.createElement("div");
     yearDialog.classList.add("yearDialog");
     slider.appendChild(yearDialog);
 
@@ -114,7 +116,7 @@ const structure = {
     markers = document.querySelectorAll(".year");
 
     // Configure year dialog's default string
-    updateYearDialog();
+    this.updateYearDialog();
 
     // Slider mouse events
     this.addEventListener(slider, "mousedown", "sliderMouseDown", (e) => {
@@ -128,7 +130,7 @@ const structure = {
         let newPosition = startOffset + e.clientX - startX;
         if (newPosition >= 0 && newPosition <= timeline.offsetWidth) {
           slider.style.left = `${newPosition}px`;
-          updateYearDialog();
+          this.updateYearDialog();
         }
       }
     });
@@ -136,28 +138,28 @@ const structure = {
     this.addEventListener(document, "mouseup", "sliderMouseUp", () => {
       isDragging = false;
     });
+  },
 
-    function updateYearDialog() {
-      const sliderRect = slider.getBoundingClientRect();
-      const sliderX = sliderRect.x + sliderRect.width / 2;
-      let nearestYearMarker = null;
-      let nearestDistance = Infinity;
+  updateYearDialog() {
+    const sliderRect = slider.getBoundingClientRect();
+    const sliderX = sliderRect.x + sliderRect.width / 2;
+    let nearestYearMarker = null;
+    let nearestDistance = Infinity;
 
-      markers.forEach((marker) => {
-        const markerRect = marker.getBoundingClientRect();
-        const markerX = markerRect.x + markerRect.width / 2;
-        const distance = Math.abs(sliderX - markerX);
+    markers.forEach((marker) => {
+      const markerRect = marker.getBoundingClientRect();
+      const markerX = markerRect.x + markerRect.width / 2;
+      const distance = Math.abs(sliderX - markerX);
 
-        if (distance < nearestDistance) {
-          nearestYearMarker = marker;
-          nearestDistance = distance;
-        }
-      });
-
-      if (nearestYearMarker) {
-        yearDialog.innerText = nearestYearMarker.dataset.year;
-        slider.dataset.year = nearestYearMarker.dataset.year;
+      if (distance < nearestDistance) {
+        nearestYearMarker = marker;
+        nearestDistance = distance;
       }
+    });
+
+    if (nearestYearMarker) {
+      yearDialog.innerText = nearestYearMarker.dataset.year;
+      slider.dataset.year = nearestYearMarker.dataset.year;
     }
   },
 
