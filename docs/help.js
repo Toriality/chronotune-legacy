@@ -14,3 +14,14 @@ sections.forEach((section) => {
     section.scrollTo(0, 0);
   });
 });
+
+const titleScreen = document.createElement("div");
+const source = localStorage.getItem("source");
+titleScreen.innerHTML = source;
+const titleScreenBackground = titleScreen.querySelector("#titleScreenBackground");
+const tsMusic = titleScreenBackground.querySelectorAll(".tsMusic");
+tsMusic.forEach((component) => {
+  component.style.animation = "";
+});
+
+document.body.appendChild(titleScreen);

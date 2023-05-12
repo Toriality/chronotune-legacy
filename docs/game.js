@@ -18,6 +18,7 @@ const game = {
     );
     structure.createTimeline();
     await structure.createTitleScreen();
+    structure.takeSnapshot();
     this.score = 0;
     this.match = 1;
   },

@@ -338,6 +338,13 @@ const structure = {
     songBox.style.background = "";
     songBox.classList.remove("loading");
   },
+
+  takeSnapshot() {
+    const titleScreenBackground = document.querySelector(
+      "#titleScreenBackground"
+    ).outerHTML;
+    localStorage.setItem("source", titleScreenBackground);
+  },
 };
 
 export default structure;
