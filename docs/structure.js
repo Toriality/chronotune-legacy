@@ -120,7 +120,7 @@ const structure = {
     this.addEventListener(slider, "mousedown", "sliderMouseDown", (e) => {
       isDragging = true;
       startX = e.clientX;
-      startOffset = slider.offsetLeft - timeline.offsetLeft;
+      startOffset = slider.offsetLeft;
     });
 
     this.addEventListener(document, "mousemove", "sliderMouseMove", (e) => {
