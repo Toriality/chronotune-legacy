@@ -1,0 +1,44 @@
+/* Styles for the help page */
+
+#help {
+  display: flex;
+  justify-content: center;
+  gap: 4rem;
+  margin: 8rem 0 0 0;
+  padding: 2rem;
+}
+
+.section {
+  display: none;
+}
+
+.section.active {
+  width: 75%;
+  display: flex;
+  flex-direction: column;
+  animation: opacity 0.5s ease-in-out forwards;
+}
+
+@keyframes opacity {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.section-title {
+  text-align: center;
+}
+
+.section-content {
+  margin: auto;
+  padding: 2rem 4rem;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.navigation {
+  margin-top: 20vh;
+  padding: 1rem;
+}
