@@ -1,3 +1,4 @@
-import game from "./game.js";
+import structure from "./structure.js";
 
-await game.init();
+await structure.createTitleScreen();
+structure.takeSnapshot();

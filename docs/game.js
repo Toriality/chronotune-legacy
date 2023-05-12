@@ -11,16 +11,11 @@ const game = {
   },
 
   async init() {
-    structure.init(
-      this.confirm.bind(this),
-      this.nextMatch.bind(this),
-      this.start.bind(this)
-    );
+    structure.init(this.confirm.bind(this), this.nextMatch.bind(this));
     structure.createTimeline();
-    await structure.createTitleScreen();
-    structure.takeSnapshot();
     this.score = 0;
     this.match = 1;
+    await this.start();
   },
 
   async start() {
@@ -49,5 +44,7 @@ const game = {
     structure.createNextButton();
   },
 };
+
+game.init();
 
 export default game;

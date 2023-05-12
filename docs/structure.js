@@ -27,10 +27,9 @@ const structure = {
   pauseEventListener: null,
   resumeEventListener: null,
 
-  init(confirm, nextMatch, start) {
+  init(confirm, nextMatch) {
     this.confirm = confirm;
     this.nextMatch = nextMatch;
-    this.start = start;
     this.confirm, this.nextMatch;
     this.events = new Map();
     this.pausedEvents = new Map();
@@ -89,16 +88,6 @@ const structure = {
       tsMusic.classList.remove("loading");
       titleScreenBackground.appendChild(tsMusic);
     }
-
-    const startButton = document.querySelector("#titleScreen button");
-    startButton.addEventListener(
-      "click",
-      async function () {
-        const titleScreen = document.getElementById("titleScreen");
-        titleScreen.remove();
-        this.start();
-      }.bind(this)
-    );
   },
 
   createTimeline() {
