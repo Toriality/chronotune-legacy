@@ -3,6 +3,7 @@ const helpers = require("./helpers");
 const Token = require("./token");
 const TitleImage = require("./titleImage");
 const Invalid = require("./invalid");
+const Report = require("./report");
 
 async function auth(req, res, next) {
   const createToken = helpers.withRetry({
@@ -84,6 +85,7 @@ router.get("/random", auth, async (req, res) => {
       const randomSong = validPopularity[randomIndex];
 
       const data = {
+        id: randomSong.id,
         name: randomSong.name,
         artist: randomSong.artists[0].name,
         image: randomSong.album.images[0].url,
@@ -149,6 +151,20 @@ router.get("/titleImages", auth, async (req, res) => {
       titleImages = await TitleImage.findOne({}).skip(randomIndex);
       return res.json(titleImages);
     }
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+router.post("/report", async (req, res) => {
+  try {
+    const report = {
+      type: req.body.type,
+      song: req.body.song,
+      approved: false,
+    };
+    await Report.create(report);
+    return res.status(200);
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }

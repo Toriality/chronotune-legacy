@@ -1,5 +1,5 @@
 const song = {
-  state: "idle", // "idle" | "loaded"
+  id: null,
   name: null,
   artist: null,
   image: null,
@@ -9,17 +9,17 @@ const song = {
   async load() {
     const song = await fetch("http://localhost:3700/random");
     const data = await song.json();
+    this.id = data.id;
     this.name = data.name;
     this.artist = data.artist;
     this.image = data.image;
     this.year = data.year;
     this.url = data.url;
-    this.state = "loaded";
   },
 
   get() {
     return {
-      state: this.state,
+      id: this.id,
       name: this.name,
       artist: this.artist,
       image: this.image,
@@ -29,7 +29,7 @@ const song = {
   },
 
   unload() {
-    this.state = "idle";
+    this.id = null;
     this.name = null;
     this.artist = null;
     this.image = null;

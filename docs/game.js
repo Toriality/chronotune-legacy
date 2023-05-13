@@ -43,6 +43,22 @@ const game = {
     structure.finishTimeline(this.song);
     structure.createNextButton();
   },
+
+  async report(type) {
+    const response = await fetch(`http://localhost:3700/report`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        type: type,
+        song: this.song.id,
+      }),
+    });
+
+    console.log(response);
+  },
 };
 
 game.init();
@@ -59,6 +75,12 @@ toggles.forEach((toggle) => {
       content.classList.add("hide");
     }
   });
+});
+
+const reportButton = document.getElementById("reportButton");
+reportButton.addEventListener("click", async () => {
+  const type = document.querySelector("input[name=report]:checked").value;
+  await game.report(type);
 });
 
 export default game;
