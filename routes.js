@@ -53,10 +53,14 @@ async function auth(req, res, next) {
 router.get("/random", auth, async (req, res) => {
   const getRandomSong = helpers.withRetry({
     onTry: async (token, maxOffset, minPopularity) => {
+      const hasWord = Math.random() >= 0.5;
+
       const query = {
-        word: helpers.getRandomWord(),
+        word: hasWord ? helpers.getRandomWord() : "",
         year: helpers.getRandomYear(),
-        offset: helpers.getRandomOffset(maxOffset),
+        offset: hasWord
+          ? helpers.getRandomOffset(10)
+          : helpers.getRandomOffset(maxOffset),
       };
 
       if (await Invalid.findOne(query)) {
@@ -88,6 +92,7 @@ router.get("/random", auth, async (req, res) => {
         url: randomSong.preview_url,
       };
 
+      console.log(query);
       return data;
     },
     onCatch: async (err, retryCount) => {

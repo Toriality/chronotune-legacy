@@ -67,6 +67,12 @@ exports.getRandomSongs = async function (
   { word = "", year = CURRENT_YEAR, offset = 0 }
 ) {
   try {
+    const query = {
+      word: word,
+      year: year,
+      offset: offset,
+    };
+
     const response = await fetch(
       `https://api.spotify.com/v1/search?q=${word} year:${year}&type=track&limit=50&offset=${offset}`,
       {
@@ -142,7 +148,6 @@ exports.getRandomOffset = function (max) {
   return Math.floor(Math.random() * max);
 };
 
-exports.getRandomWord = function (chance = 100) {
-  const hasWord = Math.floor(Math.random() * 100) < chance;
-  return hasWord ? randomWords() : "";
+exports.getRandomWord = function () {
+  return randomWords();
 };
