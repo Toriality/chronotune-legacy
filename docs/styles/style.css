@@ -78,13 +78,6 @@ li {
   box-shadow: 8px 8px black;
 }
 
-#menu h1 {
-  color: white;
-  text-shadow: 2px 2px black;
-  font-family: var(--font_title);
-  margin: 2rem 0;
-}
-
 #pages {
   position: absolute;
   top: 0;

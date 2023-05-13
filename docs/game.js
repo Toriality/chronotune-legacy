@@ -47,4 +47,18 @@ const game = {
 
 game.init();
 
+const toggles = document.querySelectorAll(".toggle");
+toggles.forEach((toggle) => {
+  const content = document.getElementById(toggle.dataset.content);
+  toggle.addEventListener("click", () => {
+    content.classList.toggle("hide");
+  });
+
+  document.addEventListener("mousedown", (e) => {
+    if (!toggle.contains(e.target) && !content.contains(e.target)) {
+      content.classList.add("hide");
+    }
+  });
+});
+
 export default game;
