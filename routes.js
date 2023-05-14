@@ -84,6 +84,10 @@ router.get("/random", auth, async (req, res) => {
       const randomIndex = Math.floor(Math.random() * validPopularity.length);
       const randomSong = validPopularity[randomIndex];
 
+      if (await Report.findOne({ song: randomSong.id, approved: true })) {
+        throw new Error("Invalid song found");
+      }
+
       const data = {
         id: randomSong.id,
         name: randomSong.name,
