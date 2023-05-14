@@ -168,7 +168,7 @@ router.post("/report", async (req, res) => {
       approved: false,
     };
     await Report.create(report);
-    return res.status(200);
+    return res.json("OK");
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }

@@ -13,6 +13,7 @@ const game = {
   async init() {
     structure.init(this.confirm.bind(this), this.nextMatch.bind(this));
     structure.createTimeline();
+    structure.createTogglers();
     this.score = 0;
     this.match = 1;
     await this.start();
@@ -23,6 +24,7 @@ const game = {
     console.log(this.song);
     structure.createSongElements(this.song);
     structure.createConfirmButton(this.song);
+    structure.createReportButton(this.song);
   },
 
   async finish() {
@@ -43,44 +45,8 @@ const game = {
     structure.finishTimeline(this.song);
     structure.createNextButton();
   },
-
-  async report(type) {
-    const response = await fetch(`http://localhost:3700/report`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
-        type: type,
-        song: this.song.id,
-      }),
-    });
-
-    console.log(response);
-  },
 };
 
 game.init();
-
-const toggles = document.querySelectorAll(".toggle");
-toggles.forEach((toggle) => {
-  const content = document.getElementById(toggle.dataset.content);
-  toggle.addEventListener("click", () => {
-    content.classList.toggle("hide");
-  });
-
-  document.addEventListener("mousedown", (e) => {
-    if (!toggle.contains(e.target) && !content.contains(e.target)) {
-      content.classList.add("hide");
-    }
-  });
-});
-
-const reportButton = document.getElementById("reportButton");
-reportButton.addEventListener("click", async () => {
-  const type = document.querySelector("input[name=report]:checked").value;
-  await game.report(type);
-});
 
 export default game;

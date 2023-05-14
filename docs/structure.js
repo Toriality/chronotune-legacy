@@ -15,6 +15,9 @@ let songTime = document.querySelector("#songTime");
 let confirmButton = document.querySelector("#confirmButton");
 let nextButton = document.querySelector("#nextButton");
 let newGameButton = document.querySelector("#newGameButton");
+let reportButton = document.querySelector("#reportButton button");
+let reportToggle = document.querySelector('[data-content="report"]');
+let togglers = document.querySelectorAll(".toggle");
 let blurBox = null;
 let audio = new Audio();
 
@@ -72,7 +75,25 @@ const structure = {
     this.resumeEventListener(document, "mousemove", "sliderMouseMove");
     this.resumeEventListener(document, "mouseup", "sliderMouseUp");
     audio.src = "";
+    reportToggle.classList.add("hide");
+    reportButton.disabled = true;
+    this.removeEventListener(reportButton, "click", "reportButtonClick");
     this.updateYearDialog();
+  },
+
+  createTogglers() {
+    togglers.forEach((toggle) => {
+      const content = document.getElementById(toggle.dataset.content);
+      toggle.addEventListener("click", () => {
+        content.classList.toggle("hide");
+      });
+
+      document.addEventListener("mousedown", (e) => {
+        if (!toggle.contains(e.target) && !content.contains(e.target)) {
+          content.classList.add("hide");
+        }
+      });
+    });
   },
 
   async createTitleScreen() {
@@ -274,6 +295,25 @@ const structure = {
       }.bind(this),
       { once: true }
     );
+  },
+
+  createReportButton(song) {
+    reportToggle.classList.remove("hide");
+    reportButton.disabled = false;
+    this.addEventListener(reportButton, "click", "reportButtonClick", async () => {
+      const type = document.querySelector("input[name=report]:checked").value;
+      reportButton.disabled = true;
+      await fetch("http://localhost:3700/report", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          type: type,
+          song: song.id,
+        }),
+      });
+    });
   },
 
   finishSongFrame(song, score) {
