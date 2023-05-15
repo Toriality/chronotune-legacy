@@ -101,7 +101,7 @@ const structure = {
   },
 
   async createTitleScreen() {
-    const response = await fetch("http://localhost:3700/titleImages");
+    const response = await fetch("https://chronotune-server.onrender.com/titleImages");
     const data = await response.json();
     const images = data.images;
 
@@ -307,7 +307,7 @@ const structure = {
     this.addEventListener(reportButton, "click", "reportButtonClick", async () => {
       const type = document.querySelector("input[name=report]:checked").value;
       reportButton.disabled = true;
-      await fetch("http://localhost:3700/report", {
+      await fetch("https://chronotune-server.onrender.com/report", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

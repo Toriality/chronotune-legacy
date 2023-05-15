@@ -85,7 +85,7 @@
       const button = document.querySelector("button");
       button.addEventListener("click", async () => {
         button.disabled = true;
-        const response = await fetch("http://localhost:3700/songFact", {
+        const response = await fetch("https://chronotune-server.onrender.com/songFact", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

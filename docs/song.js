@@ -9,7 +9,7 @@ const song = {
   info: null,
 
   async load() {
-    const song = await fetch("http://localhost:3700/random");
+    const song = await fetch("https://chronotune-server.onrender.com/random");
     const data = await song.json();
     this.id = data.id;
     this.name = data.name;
