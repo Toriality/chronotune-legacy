@@ -5,6 +5,7 @@ const song = {
   image: null,
   year: null,
   url: null,
+  preview: null,
   info: null,
 
   async load() {
@@ -16,6 +17,7 @@ const song = {
     this.image = data.image;
     this.year = data.year;
     this.url = data.url;
+    this.preview = data.preview;
     this.info = data.info;
   },
 
@@ -27,6 +29,7 @@ const song = {
       image: this.image,
       year: this.year,
       url: this.url,
+      preview: this.preview,
       info: this.info,
     };
   },
@@ -38,6 +41,7 @@ const song = {
     this.image = null;
     this.year = null;
     this.url = null;
+    this.preview = null;
     this.info = null;
   },
 };

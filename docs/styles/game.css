@@ -164,6 +164,9 @@
   font-size: small;
   color: #888;
 }
+.frameEnd a:hover {
+  color: lightgreen;
+}
 
 #gameInput {
   z-index: 999;

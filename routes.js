@@ -98,7 +98,8 @@ router.get("/random", auth, async (req, res) => {
         image: randomSong.album.images[0].url,
         year: randomSong.album.release_date.substring(0, 4),
         popularity: randomSong.popularity,
-        url: randomSong.preview_url,
+        preview: randomSong.preview_url,
+        url: randomSong.external_urls.spotify,
         info: info,
       };
 

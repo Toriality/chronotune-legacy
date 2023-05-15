@@ -218,7 +218,7 @@ const structure = {
     songBox.classList.remove("loading");
     songFrame.classList.remove("hide");
 
-    audio.src = song.url;
+    audio.src = song.preview;
     audio.volume = 0.5;
     this.addEventListener(songFrame, "click", "songFrameClick", () => {
       if (audio.paused) {
@@ -340,8 +340,10 @@ const structure = {
     songFrame.innerHTML = `
         <h1>${song.year}</h1>
         <h2>Score: ${score} pts</h2>
-        <h3>${song.name}</h3>
-        <h4>By ${song.artist}</h4>
+        <a href="${song.url}" target="_blank">
+          <h3>${song.name}</h3>
+          <h4>By ${song.artist}</h4>
+        </a>
     `;
 
     if (song.info) {
