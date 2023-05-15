@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+    />
+    <link rel="stylesheet" href="./styles/style.css" />
+    <link rel="stylesheet" href="./styles/title-screen.css" />
+    <link rel="stylesheet" href="./styles/help.css" />
+    <title>Chronotune: Help</title>
+  </head>
+  <body>
+    <div id="pages">
+      <ul>
+        <li><a href="./index.html">Home</a></li>
+        <li><a href="./leaderboards.html">Leaderboards</a></li>
+      </ul>
+    </div>
+    <div class="center-screen">
+      <div>
+        <i class="fa-solid fa-arrow-left box button-default navigation" id="back"></i>
+      </div>
+      <div class="section active">
+        <div class="section-title">
+          <h2 class="title">What is Chronotune?</h2>
+        </div>
+        <div class="section-content box">
+          <p>
+            Music has the power to transport us through time and space, and with
+            Chronotune, you can put your knowledge of music history to the test.
+          </p>
+          <p>
+            The game's concept is simple! Guess the year that a randomly selected song was
+            released. With each correct guess, you earn points, and in the end of the
+            match, you'll be able to see your score.
+          </p>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">
+          <h2 class="title">How to Play Chronotune?</h2>
+        </div>
+        <div class="section-content box">
+          <p>Playing Chronotune is a breeze! Just follow these steps:</p>
+
+          <ul>
+            <li>Start the game by clicking on the "Start Game" button.</li>
+            <li>A random song will be loaded.</li>
+            <li>Click on the colorful box to start playing the song.</li>
+            <li>
+              Use your knowledge to guess the year the song was released. Use the slider
+              on the bottom of the screen to slide through the years.
+            </li>
+            <li>Click on the "Confirm" button to reveal the answer.</li>
+            <li>Click on the "Next song" button to advance to the next song.</li>
+            <li>
+              After 5 matches, you will be able to see your final score and your high
+              score.
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">
+          <h2 class="title">The Music in Chronotune</h2>
+        </div>
+        <div class="section-content box">
+          <p>
+            One of the unique aspects of Chronotune is its broad music selection. The game
+            features songs from the Spotify's database, meaning you'll get millions of
+            different songs each time you play Chronotune!
+          </p>
+          <p>
+            We build a special algorithm for Chronotune that filters off most of the
+            invalid songs like AudioBooks and Podcasts, that way, you'll get the best
+            experience possible while playing.
+          </p>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">
+          <h2 class="title">The Educational Value of Chronotune</h2>
+        </div>
+        <div class="section-content box">
+          <p>
+            Chronotune is not just a game; it's also an educational experience. By playing
+            Chronotune, you can learn about the history of music and how different genres
+            have evolved over time. With songs from different eras and styles, you'll gain
+            a comprehensive understanding of popular (and not so popular) music history.
+          </p>
+          <p>
+            Chronotune is an excellent way to discover new music. You might come across a
+            song you've never heard before that you absolutely love. And with songs from
+            different genres, you might discover a new favorite artist or band. Variety
+            and diversity is our top priority!
+          </p>
+        </div>
+      </div>
+      <div>
+        <i class="fa-solid fa-arrow-right box button-default navigation" id="forward"></i>
+      </div>
+    </div>
+    <script type="module">
+      import structure from "./structure.js";
+      structure.createNavigation();
+      structure.loadSnapshot();
+    </script>
+  </body>
+</html>

@@ -2,16 +2,24 @@ const START_YEAR = 1900;
 const CURRENT_YEAR = new Date().getFullYear();
 const TOTAL_YEARS = CURRENT_YEAR - START_YEAR + 1;
 
+let menuTitle = document.querySelector("#menu h1");
 let timeline = document.querySelector("#timeline");
 let slider = document.querySelector("#timelineSlider");
+let yearDialog = null;
 let markers = null;
 let correctMarker = null;
 let correctYearDialog = null;
 let songBox = document.querySelector("#songBox");
 let songFrame = document.querySelector("#songFrame");
+let songTime = document.querySelector("#songTime");
 let confirmButton = document.querySelector("#confirmButton");
 let nextButton = document.querySelector("#nextButton");
 let newGameButton = document.querySelector("#newGameButton");
+let reportButton = document.querySelector("#reportButton button");
+let reportToggle = document.querySelector('[data-content="report"]');
+let togglers = document.querySelectorAll(".toggle");
+let songInfo = document.getElementById("songInfo");
+let menuList = document.querySelector("#menu ul");
 let blurBox = null;
 let audio = new Audio();
 
@@ -56,7 +64,7 @@ const structure = {
     songBox.classList.add("loading");
     songBox.style.backgroundImage = "";
     songFrame.classList.remove("frameEnd");
-    songFrame.classList.add("loading");
+    songFrame.classList.add("hide");
     songFrame.innerHTML = "";
     songFrame.style.backgroundColor = "";
     confirmButton.disabled = true;
@@ -69,6 +77,44 @@ const structure = {
     this.resumeEventListener(document, "mousemove", "sliderMouseMove");
     this.resumeEventListener(document, "mouseup", "sliderMouseUp");
     audio.src = "";
+    reportToggle.classList.add("hide");
+    reportButton.disabled = true;
+    this.removeEventListener(reportButton, "click", "reportButtonClick");
+    songInfo.classList.add("hide");
+    menuList.lastElementChild.remove();
+    this.updateYearDialog();
+  },
+
+  createTogglers() {
+    togglers.forEach((toggle) => {
+      const content = document.getElementById(toggle.dataset.content);
+      toggle.addEventListener("click", () => {
+        content.classList.toggle("hide");
+      });
+
+      document.addEventListener("mousedown", (e) => {
+        if (!toggle.contains(e.target) && !content.contains(e.target)) {
+          content.classList.add("hide");
+        }
+      });
+    });
+  },
+
+  async createTitleScreen() {
+    const response = await fetch("http://localhost:3700/titleImages");
+    const data = await response.json();
+    const images = data.images;
+
+    const titleScreenBackground = document.getElementById("titleScreenBackground");
+    for (let i = 0; i < 50; i++) {
+      const tsMusic = document.createElement("div");
+      tsMusic.classList.add("tsMusic");
+      const direction = i % 2 === 0 ? "slider_up" : "slider_down";
+      tsMusic.style.backgroundImage = `url(${images[i]})`;
+      tsMusic.style.animation = `${direction} 1s ease-out forwards`;
+      tsMusic.classList.remove("loading");
+      titleScreenBackground.appendChild(tsMusic);
+    }
   },
 
   createTimeline() {
@@ -80,7 +126,7 @@ const structure = {
     slider = document.querySelector("#timelineSlider");
 
     // Create year dialog above slider
-    const yearDialog = document.createElement("div");
+    yearDialog = document.createElement("div");
     yearDialog.classList.add("yearDialog");
     slider.appendChild(yearDialog);
 
@@ -95,13 +141,13 @@ const structure = {
     markers = document.querySelectorAll(".year");
 
     // Configure year dialog's default string
-    updateYearDialog();
+    this.updateYearDialog();
 
     // Slider mouse events
     this.addEventListener(slider, "mousedown", "sliderMouseDown", (e) => {
       isDragging = true;
       startX = e.clientX;
-      startOffset = slider.offsetLeft - timeline.offsetLeft;
+      startOffset = slider.offsetLeft;
     });
 
     this.addEventListener(document, "mousemove", "sliderMouseMove", (e) => {
@@ -109,7 +155,7 @@ const structure = {
         let newPosition = startOffset + e.clientX - startX;
         if (newPosition >= 0 && newPosition <= timeline.offsetWidth) {
           slider.style.left = `${newPosition}px`;
-          updateYearDialog();
+          this.updateYearDialog();
         }
       }
     });
@@ -117,34 +163,47 @@ const structure = {
     this.addEventListener(document, "mouseup", "sliderMouseUp", () => {
       isDragging = false;
     });
+  },
 
-    function updateYearDialog() {
-      const sliderRect = slider.getBoundingClientRect();
-      const sliderX = sliderRect.x + sliderRect.width / 2;
-      let nearestYearMarker = null;
-      let nearestDistance = Infinity;
+  updateYearDialog() {
+    const sliderRect = slider.getBoundingClientRect();
+    const sliderX = sliderRect.x + sliderRect.width / 2;
+    let nearestYearMarker = null;
+    let nearestDistance = Infinity;
 
-      markers.forEach((marker) => {
-        const markerRect = marker.getBoundingClientRect();
-        const markerX = markerRect.x + markerRect.width / 2;
-        const distance = Math.abs(sliderX - markerX);
+    markers.forEach((marker) => {
+      const markerRect = marker.getBoundingClientRect();
+      const markerX = markerRect.x + markerRect.width / 2;
+      const distance = Math.abs(sliderX - markerX);
 
-        if (distance < nearestDistance) {
-          nearestYearMarker = marker;
-          nearestDistance = distance;
-        }
-      });
-
-      if (nearestYearMarker) {
-        yearDialog.innerText = nearestYearMarker.dataset.year;
-        slider.dataset.year = nearestYearMarker.dataset.year;
+      if (distance < nearestDistance) {
+        nearestYearMarker = marker;
+        nearestDistance = distance;
       }
+    });
+
+    if (nearestYearMarker) {
+      yearDialog.innerText = nearestYearMarker.dataset.year;
+      slider.dataset.year = nearestYearMarker.dataset.year;
     }
   },
 
   createSongElements(song) {
-    songBox = document.querySelector("#songBox");
-    songFrame = document.querySelector("#songFrame");
+    songFrame.appendChild(songTime);
+
+    // Make random color
+    const randomColor1 = randomRGB();
+    const randomColor2 = randomRGB();
+    const var1 = "var(--color_random_1)";
+    const var2 = "var(--color_random_2)";
+    const root = document.querySelector(":root");
+    root.style.setProperty("--color_random_1", randomColor1);
+    root.style.setProperty("--color_random_2", randomColor2);
+
+    // menuTitle.style.color = var1;
+    slider.style.backgroundColor = var1;
+    songFrame.style.backgroundColor = var1;
+    songTime.style.backgroundColor = var2;
 
     // Create song box and blur effect
     songBox.style.backgroundImage = `url(${song.image})`;
@@ -153,27 +212,24 @@ const structure = {
     songBox.appendChild(blurBox);
 
     // Configure song frame
-    songFrame.style.backgroundColor = randomRGB();
     songFrame.innerHTML = "<h1>Click here to play</h1>";
 
     // Remove loading class
     songBox.classList.remove("loading");
-    songFrame.classList.remove("loading");
+    songFrame.classList.remove("hide");
 
-    audio.src = song.url;
+    audio.src = song.preview;
     audio.volume = 0.5;
     this.addEventListener(songFrame, "click", "songFrameClick", () => {
       if (audio.paused) {
         songFrame.innerHTML = "";
         audio.play();
         const h1 = document.createElement("h1");
-        const songTime = document.createElement("div");
         h1.innerText = `Playing now: "${song.name}"`;
-        songTime.style.backgroundColor = randomRGB();
-        songTime.id = "songTime";
         songFrame.appendChild(h1);
         songFrame.appendChild(songTime);
       } else {
+        songTime.style.width = 0;
         songFrame.innerHTML = "";
         audio.pause();
         audio.currentTime = 0;
@@ -182,6 +238,7 @@ const structure = {
     });
 
     this.addEventListener(audio, "ended", "audioEnded", () => {
+      songTime.style.width = 0;
       songFrame.innerHTML = `<h1>Click here to play</h1>`;
     });
 
@@ -244,6 +301,33 @@ const structure = {
     );
   },
 
+  createReportButton(song) {
+    reportToggle.classList.remove("hide");
+    reportButton.disabled = false;
+    this.addEventListener(reportButton, "click", "reportButtonClick", async () => {
+      const type = document.querySelector("input[name=report]:checked").value;
+      reportButton.disabled = true;
+      await fetch("http://localhost:3700/report", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          type: type,
+          song: song.id,
+        }),
+      });
+    });
+  },
+
+  createSongFactOption(song) {
+    const option = document.createElement("a");
+    option.href = `./songFact.html?songId=${song.id}&image=${song.image}`;
+    option.target = "_blank";
+    option.innerHTML = `<li>Create a song fact</li>`;
+    menuList.appendChild(option);
+  },
+
   finishSongFrame(song, score) {
     this.removeEventListener(songFrame, "click", "songFrameClick");
     this.removeEventListener(audio, "ended", "audioEnded");
@@ -251,13 +335,26 @@ const structure = {
     this.pauseEventListener(slider, "mousedown", "sliderMouseDown");
     this.pauseEventListener(document, "mousemove", "sliderMouseMove");
     this.pauseEventListener(document, "mouseup", "sliderMouseUp");
+    songTime.style.width = 0;
     songFrame.classList.add("frameEnd");
     songFrame.innerHTML = `
         <h1>${song.year}</h1>
         <h2>Score: ${score} pts</h2>
-        <h3>${song.name}</h3>
-        <h4>By ${song.artist}</h4>
+        <a href="${song.url}" target="_blank">
+          <h3>${song.name}</h3>
+          <h4>By ${song.artist}</h4>
+        </a>
     `;
+
+    if (song.info) {
+      const image = song.info.image || song.image;
+      const fact = song.info.fact;
+      const songImage = document.getElementById("songImage");
+      const songFacts = document.getElementById("songFacts");
+      songInfo.classList.remove("hide");
+      songImage.style.backgroundImage = `url(${image})`;
+      songFacts.textContent = fact;
+    }
   },
 
   finishTimeline(song) {
@@ -291,10 +388,56 @@ const structure = {
         <h2>You scored ${score} pts</h2>
         <h3>Highest score: ${highestScore} pts</h3>
     `;
-    songFrame.classList.remove("loading");
+    songFrame.classList.remove("hide");
 
     songBox.style.background = "";
     songBox.classList.remove("loading");
+  },
+
+  takeSnapshot() {
+    const titleScreenBackground = document.querySelector(
+      "#titleScreenBackground"
+    ).outerHTML;
+    localStorage.setItem("source", titleScreenBackground);
+  },
+
+  loadSnapshot() {
+    const titleScreen = document.createElement("div");
+    titleScreen.id = "loadedTitleScreen";
+    const source = localStorage.getItem("source");
+    titleScreen.innerHTML = source;
+    const titleScreenBackground = titleScreen.querySelector("#titleScreenBackground");
+    const tsMusic = titleScreenBackground.querySelectorAll(".tsMusic");
+    tsMusic.forEach((component) => {
+      component.style.animation = "";
+    });
+
+    document.body.appendChild(titleScreen);
+  },
+
+  createNavigation() {
+    const sections = document.querySelectorAll(".section");
+    const forward = document.querySelector("#forward");
+    const back = document.querySelector("#back");
+    let currentSection = 0;
+
+    forward.addEventListener("click", () => {
+      currentSection++;
+      if (currentSection > sections.length - 1) {
+        currentSection = sections.length - 1;
+      }
+      sections[currentSection - 1].classList.remove("active");
+      sections[currentSection].classList.add("active");
+    });
+
+    back.addEventListener("click", () => {
+      currentSection--;
+      if (currentSection < 0) {
+        currentSection = 0;
+      }
+      sections[currentSection + 1].classList.remove("active");
+      sections[currentSection].classList.add("active");
+    });
   },
 };
 

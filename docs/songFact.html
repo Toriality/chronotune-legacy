@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./styles/style.css" />
+    <link rel="stylesheet" href="./styles/title-screen.css" />
+    <link rel="stylesheet" href="./styles/songFact.css" />
+    <title>Chronotune: Add a Song Fact</title>
+  </head>
+  <body>
+    <div class="center-screen">
+      <div class="section active">
+        <div class="section-title">
+          <h2 class="title no-margin">Add a song fact</h2>
+        </div>
+        <div class="section-content" id="factForm">
+          <form>
+            <div class="form-group">
+              <label for="songId">Song Identifier:</label>
+              <input
+                class="box"
+                type="text"
+                id="songId"
+                name="songId"
+                placeholder="Song Identifier"
+              />
+              <p class="help-text">
+                Input any identifier for the song, such as a song title, Spotify ID or
+                Spotify URL
+              </p>
+            </div>
+            <div class="form-group">
+              <label for="image">Image URL:</label>
+              <input
+                class="box"
+                type="text"
+                id="image"
+                name="image"
+                placeholder="Image URL"
+              />
+              <p class="help-text">
+                Input the URL of the image for the song. If no image is provided, the
+                song's album image will be used
+              </p>
+            </div>
+            <div class="form-group">
+              <label for="fact">Song Fact:</label>
+              <textarea
+                class="box"
+                id="fact"
+                name="fact"
+                placeholder="Song fact text"
+                rows="8"
+              ></textarea>
+              <p class="help-text">Write an interesting historical fact about the song</p>
+            </div>
+            <button class="button-default body-font box" type="button">Submit</button>
+            <p id="display-error"></p>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import structure from "./structure.js";
+      const params = new URLSearchParams(window.location.search);
+      document.getElementById("songId").value = params.get("songId");
+      document.getElementById("image").value = params.get("image");
+
+      structure.loadSnapshot();
+
+      if (params.get("image")) {
+        // change css properties of all .tsMusic elements
+        document.querySelectorAll(".tsMusic").forEach((el) => {
+          el.style.opacity = "0";
+        });
+        document.getElementById("blendColor").style = `
+        background-image: url(${params.get("image")});
+        background-size: cover;
+        `;
+      }
+
+      const button = document.querySelector("button");
+      button.addEventListener("click", async () => {
+        button.disabled = true;
+        const response = await fetch("http://localhost:3700/songFact", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            songId: document.getElementById("songId").value,
+            fact: document.getElementById("fact").value,
+            image: document.getElementById("image").value,
+          }),
+        });
+
+        const data = await response.json();
+        const content = document.querySelector(".section-content");
+        const error = document.getElementById("display-error");
+
+        if (response.status !== 200) {
+          error.innerText = data.error;
+          button.disabled = false;
+        } else {
+          error.innerText = "Success!";
+        }
+
+        content.appendChild(error);
+      });
+    </script>
+  </body>
+</html>

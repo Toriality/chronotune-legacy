@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./styles/style.css" />
+    <link rel="stylesheet" href="./styles/game.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+    />
+    <title>Chronotune: New Game</title>
+  </head>
+  <body>
+    <div id="root">
+      <div class="toggle" data-content="menu">
+        <i class="fa-solid fa-bars"></i>
+      </div>
+      <div class="toggle hide" data-content="report">
+        <i class="fa-solid fa-flag"></i>
+      </div>
+      <div id="menu" class="menu menu-left hide">
+        <h2 class="title no-margin">Chronotune</h2>
+        <ul>
+          <a href="./index.html">
+            <li>Go to Home</li>
+          </a>
+          <a href="./leaderboards.html">
+            <li>Leaderboards</li>
+          </a>
+          <a href="./help.html">
+            <li>Help</li>
+          </a>
+        </ul>
+      </div>
+      <div id="report" class="menu menu-right hide">
+        <h2 class="title no-margin">Report Song</h2>
+        <p>Please inform the reason for the report</p>
+        <form>
+          <div class="radio-group">
+            <input type="radio" id="report-0" name="report" value="0" checked />
+            <label for="report-0">
+              Something went wrong while loading or playing the song
+            </label>
+          </div>
+          <div class="radio-group">
+            <input type="radio" id="report-1" name="report" value="1" />
+            <label for="report-1">
+              This is not a valid song (It is a AudioBook or an Podcast episode)
+            </label>
+          </div>
+          <div class="radio-group">
+            <input type="radio" id="report-2" name="report" value="2" />
+            <label for="report-2"> This song contains explicit content </label>
+          </div>
+          <div class="radio-group">
+            <input type="radio" id="report-3" name="report" value="3" />
+            <label for="report-3"> Other </label>
+          </div>
+        </form>
+        <div id="reportButton">
+          <button type="button" class="button-default body-font box">Submit</button>
+        </div>
+      </div>
+      <div id="songBox" class="loading">
+        <div id="songFrame" class="box hide">
+          <div id="songTime" data-time="0"></div>
+        </div>
+        <div id="songInfo" class="hide">
+          <h2 class="title no-margin">Song Facts</h2>
+          <div id="songInfoWrapper">
+            <div id="songImage"></div>
+            <div id="songFacts"></div>
+          </div>
+        </div>
+      </div>
+      <div id="gameInput">
+        <div id="timeline">
+          <div id="timelineSlider"></div>
+        </div>
+        <button type="button" disabled id="confirmButton">Confirm</button>
+        <button type="button" disabled id="nextButton" class="hide">Next song</button>
+        <button type="button" disabled id="newGameButton" class="hide">New game</button>
+      </div>
+    </div>
+
+    <script type="module" src="game.js"></script>
+  </body>
+</html>

@@ -10,12 +10,13 @@ const game = {
     return song.get();
   },
 
-  init() {
+  async init() {
     structure.init(this.confirm.bind(this), this.nextMatch.bind(this));
     structure.createTimeline();
+    structure.createTogglers();
     this.score = 0;
     this.match = 1;
-    this.start();
+    await this.start();
   },
 
   async start() {
@@ -23,6 +24,8 @@ const game = {
     console.log(this.song);
     structure.createSongElements(this.song);
     structure.createConfirmButton(this.song);
+    structure.createReportButton(this.song);
+    structure.createSongFactOption(this.song);
   },
 
   async finish() {
@@ -44,5 +47,7 @@ const game = {
     structure.createNextButton();
   },
 };
+
+game.init();
 
 export default game;

@@ -4,26 +4,45 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="./styles/style.css" />
+    <link rel="stylesheet" href="./styles/title-screen.css" />
+    <link rel="stylesheet" href="./styles/index.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kalam&family=Kanit&display=swap"
+      rel="stylesheet"
+    />
     <title>Chronotune</title>
   </head>
   <body>
-    <header>
-      <h1>Chronotune</h1>
-    </header>
     <div id="root">
-      <div id="songBox" class="loading">
-        <div id="songFrame" class="loading">
-          <div id="songTime" data-time="0"></div>
+      <div id="titleScreen">
+        <div id="pages">
+          <ul>
+            <a href="./help.html">
+              <li>Help</li>
+            </a>
+            <a href="./leaderboards.html">
+              <li>Leaderboards</li>
+            </a>
+          </ul>
         </div>
-      </div>
-      <div id="gameInput">
-        <div id="timeline">
-          <div id="timelineSlider"></div>
+        <a href="https://github.com/Toriality/chronotune" target="_blank">
+          <div id="github">
+            <div id="githubIcon"></div>
+            <div id="githubText"><p class="small">Contribute to the code!</p></div>
+          </div>
+        </a>
+        <div id="version">version 0.2</div>
+        <div id="titleScreenBackground">
+          <div id="blendColor"></div>
         </div>
-        <button type="button" disabled id="confirmButton">Confirm</button>
-        <button type="button" disabled id="nextButton" class="hide">Next song</button>
-        <button type="button" disabled id="newGameButton" class="hide">New game</button>
+        <h1 class="title no-margin">Chronotune</h1>
+        <p class="with-shadow big">Guess the year of random songs!</p>
+        <a href="./game.html">
+          <button class="button-default body-font box">Start Game</button>
+        </a>
       </div>
     </div>
 
