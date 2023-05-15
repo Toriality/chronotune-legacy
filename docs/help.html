@@ -20,7 +20,7 @@
         <li><a href="./leaderboards.html">Leaderboards</a></li>
       </ul>
     </div>
-    <div id="help">
+    <div class="center-screen">
       <div>
         <i class="fa-solid fa-arrow-left box button-default navigation" id="back"></i>
       </div>
@@ -104,6 +104,10 @@
         <i class="fa-solid fa-arrow-right box button-default navigation" id="forward"></i>
       </div>
     </div>
-    <script src="help.js" type="module"></script>
+    <script type="module">
+      import structure from "./structure.js";
+      structure.createNavigation();
+      structure.loadSnapshot();
+    </script>
   </body>
 </html>

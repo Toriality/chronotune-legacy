@@ -4,6 +4,7 @@ const Token = require("./token");
 const TitleImage = require("./titleImage");
 const Invalid = require("./invalid");
 const Report = require("./report");
+const SongFact = require("./songFact");
 
 async function auth(req, res, next) {
   const createToken = helpers.withRetry({
@@ -88,6 +89,8 @@ router.get("/random", auth, async (req, res) => {
         throw new Error("Invalid song found");
       }
 
+      const info = await SongFact.findOne({ song: randomSong.id, approved: true });
+
       const data = {
         id: randomSong.id,
         name: randomSong.name,
@@ -96,6 +99,7 @@ router.get("/random", auth, async (req, res) => {
         year: randomSong.album.release_date.substring(0, 4),
         popularity: randomSong.popularity,
         url: randomSong.preview_url,
+        info: info,
       };
 
       console.log(query);
@@ -168,6 +172,21 @@ router.post("/report", async (req, res) => {
       approved: false,
     };
     await Report.create(report);
+    return res.json("OK");
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+router.post("/songFact", async (req, res) => {
+  try {
+    const songFact = {
+      songId: req.body.songId,
+      image: req.body.image,
+      fact: req.body.fact,
+      approved: false,
+    };
+    await SongFact.create(songFact);
     return res.json("OK");
   } catch (err) {
     return res.status(500).json({ error: err.message });

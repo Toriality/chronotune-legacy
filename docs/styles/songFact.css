@@ -1,0 +1,42 @@
+#factForm {
+  background-color: transparent;
+  margin: 0;
+  flex: 1;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 2rem;
+}
+
+label {
+  margin-bottom: 0.5rem;
+}
+
+.help-text {
+  font-size: small;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+textarea {
+  resize: none;
+}
+
+input,
+textarea {
+  padding: 1rem;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  font-size: 1rem;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  background-color: gray;
+}

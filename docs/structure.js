@@ -18,6 +18,8 @@ let newGameButton = document.querySelector("#newGameButton");
 let reportButton = document.querySelector("#reportButton button");
 let reportToggle = document.querySelector('[data-content="report"]');
 let togglers = document.querySelectorAll(".toggle");
+let songInfo = document.getElementById("songInfo");
+let menuList = document.querySelector("#menu ul");
 let blurBox = null;
 let audio = new Audio();
 
@@ -78,6 +80,8 @@ const structure = {
     reportToggle.classList.add("hide");
     reportButton.disabled = true;
     this.removeEventListener(reportButton, "click", "reportButtonClick");
+    songInfo.classList.add("hide");
+    menuList.lastElementChild.remove();
     this.updateYearDialog();
   },
 
@@ -316,6 +320,14 @@ const structure = {
     });
   },
 
+  createSongFactOption(song) {
+    const option = document.createElement("a");
+    option.href = `./songFact.html?songId=${song.id}&image=${song.image}`;
+    option.target = "_blank";
+    option.innerHTML = `<li>Create a song fact</li>`;
+    menuList.appendChild(option);
+  },
+
   finishSongFrame(song, score) {
     this.removeEventListener(songFrame, "click", "songFrameClick");
     this.removeEventListener(audio, "ended", "audioEnded");
@@ -331,6 +343,16 @@ const structure = {
         <h3>${song.name}</h3>
         <h4>By ${song.artist}</h4>
     `;
+
+    if (song.info) {
+      const image = song.info.image || song.image;
+      const fact = song.info.fact;
+      const songImage = document.getElementById("songImage");
+      const songFacts = document.getElementById("songFacts");
+      songInfo.classList.remove("hide");
+      songImage.style.backgroundImage = `url(${image})`;
+      songFacts.textContent = fact;
+    }
   },
 
   finishTimeline(song) {
@@ -375,6 +397,45 @@ const structure = {
       "#titleScreenBackground"
     ).outerHTML;
     localStorage.setItem("source", titleScreenBackground);
+  },
+
+  loadSnapshot() {
+    const titleScreen = document.createElement("div");
+    titleScreen.id = "loadedTitleScreen";
+    const source = localStorage.getItem("source");
+    titleScreen.innerHTML = source;
+    const titleScreenBackground = titleScreen.querySelector("#titleScreenBackground");
+    const tsMusic = titleScreenBackground.querySelectorAll(".tsMusic");
+    tsMusic.forEach((component) => {
+      component.style.animation = "";
+    });
+
+    document.body.appendChild(titleScreen);
+  },
+
+  createNavigation() {
+    const sections = document.querySelectorAll(".section");
+    const forward = document.querySelector("#forward");
+    const back = document.querySelector("#back");
+    let currentSection = 0;
+
+    forward.addEventListener("click", () => {
+      currentSection++;
+      if (currentSection > sections.length - 1) {
+        currentSection = sections.length - 1;
+      }
+      sections[currentSection - 1].classList.remove("active");
+      sections[currentSection].classList.add("active");
+    });
+
+    back.addEventListener("click", () => {
+      currentSection--;
+      if (currentSection < 0) {
+        currentSection = 0;
+      }
+      sections[currentSection + 1].classList.remove("active");
+      sections[currentSection].classList.add("active");
+    });
   },
 };
 

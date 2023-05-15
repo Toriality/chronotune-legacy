@@ -25,6 +25,7 @@ const game = {
     structure.createSongElements(this.song);
     structure.createConfirmButton(this.song);
     structure.createReportButton(this.song);
+    structure.createSongFactOption(this.song);
   },
 
   async finish() {

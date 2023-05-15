@@ -5,6 +5,7 @@ const song = {
   image: null,
   year: null,
   url: null,
+  info: null,
 
   async load() {
     const song = await fetch("http://localhost:3700/random");
@@ -15,6 +16,7 @@ const song = {
     this.image = data.image;
     this.year = data.year;
     this.url = data.url;
+    this.info = data.info;
   },
 
   get() {
@@ -25,6 +27,7 @@ const song = {
       image: this.image,
       year: this.year,
       url: this.url,
+      info: this.info,
     };
   },
 
@@ -35,6 +38,7 @@ const song = {
     this.image = null;
     this.year = null;
     this.url = null;
+    this.info = null;
   },
 };
 
