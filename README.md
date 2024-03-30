@@ -1,3 +1,6 @@
+> [!CAUTION]
+> This is a outdated version of **Chronotune**, for the newest version visit [this link](https://github.com/Toriality/chronotune)
+
 # Chronotune
 
 **Guess the release date of random songs!**
